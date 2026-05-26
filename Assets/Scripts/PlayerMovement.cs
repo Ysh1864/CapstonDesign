@@ -42,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
         HandleInteractInput();   // ↓ 상호작용
         HandlePickupInput();     // F  줍기
         HandleDropInput();       // G  내려놓기
+        HandleToolUsage();      // 툴 사용 (좌클릭)
         UpdateFacing();
     }
 
@@ -194,6 +195,27 @@ public class PlayerMovement : MonoBehaviour
 
         inventory.DropCurrent();
     }
+
+    private void HandleToolUsage()
+    {
+        // 좌클릭 혹은 스페이스바를 눌렀을 때
+        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
+        {
+            // 이벤트 신호탄
+            OnToolUsed?.Invoke();
+
+            // 현재 손에 들고 있는 도구 기능 실행
+            if (inventory != null && inventory.HasTool)
+            {
+                // 현재 장착된 ToolObject에서 액션 컴포넌트 가져와서 실행
+                if (inventory.CurrentTool.TryGetComponent(out ToolAction toolAction))
+                {
+                    toolAction.ExecuteAction(this);
+                }
+            }
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.TryGetComponent(out IPickupable pickupable))

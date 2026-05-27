@@ -39,10 +39,9 @@ public class PlayerMovement : MonoBehaviour
         UpdateGroundCheck();
         UpdateTimers();
         HandleJumpInput();
-        HandleInteractInput();   // ↓ 상호작용
+        HandleInteractInput();   // ↓ 상호작용, 도구사용
         HandlePickupInput();     // F  줍기
         HandleDropInput();       // G  내려놓기
-        HandleToolUsage();      // 툴 사용 (좌클릭)
         UpdateFacing();
     }
 
@@ -98,14 +97,14 @@ public class PlayerMovement : MonoBehaviour
         if (input > 0.01f) { FacingDirection = 1; transform.localScale = new Vector3(1f, 1f, 1f); }
         else if (input < -0.01f) { FacingDirection = -1; transform.localScale = new Vector3(-1f, 1f, 1f); }
 
-       /* if(input != 0)
-        {
-            animator.SetBool("isRunning", true);
-        }
-        else
-        {
-            animator.SetBool("isRunning", false);
-        }*/
+        /* if(input != 0)
+         {
+             animator.SetBool("isRunning", true);
+         }
+         else
+         {
+             animator.SetBool("isRunning", false);
+         }*/
     }
 
     private void HandleJumpInput()
@@ -153,6 +152,13 @@ public class PlayerMovement : MonoBehaviour
         bool pressed = Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.F);
         if (!pressed) return;
 
+        // 우선순위 설정. 발밑에 교체할 도구가 있다면 교체
+        if (nearbyPickupable != null)
+        {
+            nearbyPickupable.OnSwitch(this);
+            return;
+        }
+
         // 트리거 범위 안에 IInteractable 이 있으면 상호작용
         if (nearbyInteractable != null)
         {
@@ -161,11 +167,26 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        // 없으면 전방 레이캐스트로 재시도
-        TryInteractRaycast();
+        // 없으면 전방 레이캐스트로 재시도하고, 상호작용에 성공했으면 도구사용 스킵
+        if (TryInteractRaycast())
+        {
+            return;
+        }
+
+        //교체할 도구 및 상호작용 오브젝트 없을때 도구사용
+        if (inventory != null && inventory.HasTool)
+        {
+            OnToolUsed?.Invoke();
+
+            if (inventory.CurrentTool.TryGetComponent(out ToolAction toolAction))
+            {
+                toolAction.ExecuteAction(this);
+            }
+        }
     }
 
-    private void TryInteractRaycast()
+    // void에서 bool로 변경하여 레이캐스트 상호작용 성공 여부를 리턴
+    private bool TryInteractRaycast()
     {
         Vector2 origin = (Vector2)transform.position + Vector2.up * 0.5f;
         Vector2 direction = new Vector2(FacingDirection, 0f);
@@ -176,7 +197,9 @@ public class PlayerMovement : MonoBehaviour
         {
             interactable.Interact(this);
             OnToolUsed?.Invoke();
+            return true;
         }
+        return false;
     }
 
     private void HandlePickupInput()
@@ -194,26 +217,6 @@ public class PlayerMovement : MonoBehaviour
         if (inventory == null) return;
 
         inventory.DropCurrent();
-    }
-
-    private void HandleToolUsage()
-    {
-        // 좌클릭 혹은 스페이스바를 눌렀을 때
-        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
-        {
-            // 이벤트 신호탄
-            OnToolUsed?.Invoke();
-
-            // 현재 손에 들고 있는 도구 기능 실행
-            if (inventory != null && inventory.HasTool)
-            {
-                // 현재 장착된 ToolObject에서 액션 컴포넌트 가져와서 실행
-                if (inventory.CurrentTool.TryGetComponent(out ToolAction toolAction))
-                {
-                    toolAction.ExecuteAction(this);
-                }
-            }
-        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -242,7 +245,6 @@ public class PlayerMovement : MonoBehaviour
     public float VerticalVelocity => rb.velocity.y;
     public bool HasNearbyPickupable => nearbyPickupable != null;
     public bool HasNearbyInteractable => nearbyInteractable != null;
-
 
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()

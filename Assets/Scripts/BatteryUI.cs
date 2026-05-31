@@ -6,23 +6,25 @@ public class BatteryUI : MonoBehaviour
 {
     [Header("UI 구성 요소")]
     [SerializeField] private Image batteryImage;
-    [SerializeField] private Sprite[] batterySprites;
+    [SerializeField] private Sprite[] batterySprites;       // 배터리 이미지 5개 (0: 5칸 ~ 4: 1칸)
 
-    [Header("감소 경고 점멸 설정")]
-    [SerializeField] private Color warningFlashColor = Color.red;    // [수정] 감소 직전 깜빡일 색상 (빨간색)
+    [Header("감소 경고 설정")]
+    [SerializeField] private Color warningFlashColor = Color.red;
     [SerializeField] private float blinkBeforeSeconds = 2f;
-    [SerializeField] private float blinkSpeed = 0.2f;
+    [SerializeField] private float blinkSpeed = 0.4f;
 
-    [Header("획득 충전 점멸 설정")]
-    [SerializeField] private Color rechargeFlashColor = Color.green;
+    [Header("획득 충전 설정")]
+    [SerializeField] private Color rechargeFlashColor = Color.green; // 5->5 상태에서만 쓰일 초록색
     [SerializeField] private float rechargeBlinkDuration = 0.8f;
-    [SerializeField] private float rechargeBlinkSpeed = 0.1f;
+    [SerializeField] private float rechargeBlinkSpeed = 0.2f;
 
     private BatteryController controller;
     private Coroutine warningBlinkRoutine;
     private Coroutine effectBlinkRoutine;
     private float timePerStage = 10f;
     private Color originalColor;
+    private int currentStageIndex = 0;      // 현재 배터리 단계 (0: 5칸, 1: 4칸, 2: 3칸, 3: 2칸, 4: 1칸)
+    private int previousStageIndex = 0;     // 충전 직전의 배터리 단계를 기억할 변수
 
     private void Awake()
     {
@@ -50,36 +52,37 @@ public class BatteryUI : MonoBehaviour
         BatteryController.OnBatteryRecharged -= HandleBatteryRecharged;
     }
 
+    // 1. 배터리 데이터(수치)가 실제로 변했을 때 호출
     private void HandleBatteryChanged(float currentBattery, int stageIndex)
     {
-        // 수치가 바뀌면 돌고 있던 모든 연출을 초기화하고 원래 색상/상태로 복구
+        // [수정] 충전 시 직전 인덱스 연산을 정확히 하기 위해, 값이 바뀌기 전 상태를 고스란히 기억해둡니다.
+        previousStageIndex = currentStageIndex;
+
         ResetAllVisuals();
+        currentStageIndex = stageIndex;
 
         if (batterySprites != null && stageIndex < batterySprites.Length)
         {
             batteryImage.sprite = batterySprites[stageIndex];
         }
 
-        // 방전 상태(0%)가 아니라면 다음 단계 소모 경고 타이머 예약 가동
         if (stageIndex < 5)
         {
             warningBlinkRoutine = StartCoroutine(BlinkWarningSchedule());
         }
     }
 
+    // 2. 플레이어가 배터리 아이템을 획득했을 때 연출 발동
     private void HandleBatteryRecharged()
     {
-        ResetAllVisuals();
+        if (warningBlinkRoutine != null) StopCoroutine(warningBlinkRoutine);
+        if (effectBlinkRoutine != null) StopCoroutine(effectBlinkRoutine);
+
+        if (batteryImage != null) batteryImage.color = originalColor;
 
         effectBlinkRoutine = StartCoroutine(BlinkRechargeEffect());
-
-        if (controller != null)
-        {
-            warningBlinkRoutine = StartCoroutine(BlinkWarningSchedule());
-        }
     }
 
-    // [수정] 경고/충전 이펙트가 겹치거나 잔상이 남지 않도록 색상과 활성화태를 깔끔하게 밀어주는 메서드
     private void ResetAllVisuals()
     {
         if (warningBlinkRoutine != null) StopCoroutine(warningBlinkRoutine);
@@ -92,7 +95,7 @@ public class BatteryUI : MonoBehaviour
         }
     }
 
-    // [수정] 다음 이미지 단계로 넘어가기 전 빨간색으로 번쩍이는 루틴
+    // [소모 경고] 10초가 지나기 전 줬던 이미지 스왑 루틴 (기존 유지)
     private IEnumerator BlinkWarningSchedule()
     {
         float waitTime = timePerStage - blinkBeforeSeconds;
@@ -102,39 +105,74 @@ public class BatteryUI : MonoBehaviour
         }
 
         float elapsed = 0f;
-        bool isColorToggled = false;
+        bool isToggled = false;
 
-        // 지정된 경고 시간(예: 2초) 동안 실행
         while (elapsed < blinkBeforeSeconds)
         {
-            isColorToggled = !isColorToggled;
+            isToggled = !isToggled;
 
-            // 이미지를 끄는 대신, 설정된 경고 색상(빨간색)과 원래 색상을 번갈아 적용합니다.
-            batteryImage.color = isColorToggled ? warningFlashColor : originalColor;
+            if (currentStageIndex == 4)
+            {
+                batteryImage.color = isToggled ? warningFlashColor : originalColor;
+            }
+            else
+            {
+                batteryImage.color = originalColor;
+
+                if (batterySprites != null && currentStageIndex + 1 < batterySprites.Length)
+                {
+                    batteryImage.sprite = isToggled ? batterySprites[currentStageIndex + 1] : batterySprites[currentStageIndex];
+                }
+            }
 
             yield return new WaitForSeconds(blinkSpeed);
             elapsed += blinkSpeed;
         }
 
-        // 루틴이 끝나면 원래 색상으로 되돌림 (이후 HandleBatteryChanged에서 이미지가 바뀝니다)
         batteryImage.color = originalColor;
     }
 
-    // 배터리 아이템을 먹었을 때 초록색으로 번쩍이는 루틴
+    // [오류 수정] 획득(충전) 시 직전 칸수와 바뀐 칸수 사이에서만 정확히 교차하도록 수정된 루틴
     private IEnumerator BlinkRechargeEffect()
     {
         float elapsed = 0f;
-        bool isColorToggled = false;
+        bool isToggled = false;
 
         while (elapsed < rechargeBlinkDuration)
         {
-            isColorToggled = !isColorToggled;
-            batteryImage.color = isColorToggled ? rechargeFlashColor : originalColor;
+            isToggled = !isToggled;
+
+            // [5->5 예외] 이미 만땅(5칸, 인덱스 0)인데 또 먹었을 때
+            if (currentStageIndex == 0 && previousStageIndex == 0)
+            {
+                batteryImage.color = isToggled ? rechargeFlashColor : originalColor;
+            }
+            else
+            {
+                batteryImage.color = originalColor;
+
+                // [정밀 수정] 이미 값이 바뀐 상태(currentStageIndex)와 바뀌기 전 상태(previousStageIndex)를 번갈아 노출합니다.
+                if (batterySprites != null)
+                {
+                    batteryImage.sprite = isToggled ? batterySprites[previousStageIndex] : batterySprites[currentStageIndex];
+                }
+            }
 
             yield return new WaitForSeconds(rechargeBlinkSpeed);
             elapsed += rechargeBlinkSpeed;
         }
 
+        // 연출 마감 후 최종 복구 및 소모 예약
         batteryImage.color = originalColor;
+        if (batterySprites != null && currentStageIndex < batterySprites.Length)
+        {
+            batteryImage.sprite = batterySprites[currentStageIndex];
+        }
+
+        if (controller != null)
+        {
+            if (warningBlinkRoutine != null) StopCoroutine(warningBlinkRoutine);
+            warningBlinkRoutine = StartCoroutine(BlinkWarningSchedule());
+        }
     }
 }

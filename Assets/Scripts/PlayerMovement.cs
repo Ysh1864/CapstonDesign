@@ -21,12 +21,13 @@ public class PlayerMovement : MonoBehaviour
     private float jumpHoldTimer;
     private bool isJumping;
 
-    private IPickupable nearbyPickupable;   // F 키로 집을 대상
-    private IInteractable nearbyInteractable; // ↓ 키로 상호작용할 대상
+    private IPickupable nearbyPickupable;
+    private IInteractable nearbyInteractable;
+
+    private Portal nearbyPortal;
+
 
     public event System.Action OnToolUsed;
-
-
 
     private void Awake()
     {
@@ -39,10 +40,13 @@ public class PlayerMovement : MonoBehaviour
         UpdateGroundCheck();
         UpdateTimers();
         HandleJumpInput();
-        HandleInteractInput();   // ↓ 상호작용
-        HandlePickupInput();     // F  줍기
-        HandleDropInput();       // G  내려놓기
+        HandleInteractInput();
+        HandlePickupInput();
+        HandleDropInput();
         UpdateFacing();
+
+        if (nearbyPortal != null)
+            nearbyPortal.SetPlayerGrounded(isGrounded);
     }
 
     private void FixedUpdate()
@@ -50,7 +54,6 @@ public class PlayerMovement : MonoBehaviour
         HandleHorizontalMovement();
         ApplyGravity();
     }
-
 
     private void UpdateGroundCheck()
     {
@@ -69,7 +72,6 @@ public class PlayerMovement : MonoBehaviour
         if (isGrounded)
             coyoteTimer = stat.coyoteTime;
     }
-
 
     private void UpdateTimers()
     {
@@ -97,20 +99,24 @@ public class PlayerMovement : MonoBehaviour
         if (input > 0.01f) { FacingDirection = 1; transform.localScale = new Vector3(1f, 1f, 1f); }
         else if (input < -0.01f) { FacingDirection = -1; transform.localScale = new Vector3(-1f, 1f, 1f); }
 
-       /* if(input != 0)
-        {
-            animator.SetBool("isRunning", true);
-        }
-        else
-        {
-            animator.SetBool("isRunning", false);
-        }*/
+        /* if(input != 0)
+         {
+             animator.SetBool("isRunning", true);
+         }
+         else
+         {
+             animator.SetBool("isRunning", false);
+         }*/
     }
 
     private void HandleJumpInput()
     {
         if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            if (nearbyPortal != null && nearbyPortal.IsUnlocked && isGrounded)
+                return;
             jumpBufferTimer = stat.jumpBufferTime;
+        }
 
         if (jumpBufferTimer > 0f && coyoteTimer > 0f)
             ExecuteJump();
@@ -146,13 +152,11 @@ public class PlayerMovement : MonoBehaviour
         rb.gravityScale = scale;
     }
 
-
     private void HandleInteractInput()
     {
         bool pressed = Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.F);
         if (!pressed) return;
 
-        // 트리거 범위 안에 IInteractable 이 있으면 상호작용
         if (nearbyInteractable != null)
         {
             nearbyInteractable.Interact(this);
@@ -160,7 +164,6 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        // 없으면 전방 레이캐스트로 재시도
         TryInteractRaycast();
     }
 
@@ -192,8 +195,9 @@ public class PlayerMovement : MonoBehaviour
         if (!Input.GetKeyDown(KeyCode.G)) return;
         if (inventory == null) return;
 
-        inventory.DropCurrent();
+        //inventory.DropCurrent();
     }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.TryGetComponent(out IPickupable pickupable))
@@ -201,6 +205,10 @@ public class PlayerMovement : MonoBehaviour
 
         if (other.TryGetComponent(out IInteractable interactable))
             nearbyInteractable = interactable;
+
+        if (other.TryGetComponent(out Portal portal))
+            nearbyPortal = portal;
+        
     }
 
     private void OnTriggerExit2D(Collider2D other)
@@ -212,15 +220,17 @@ public class PlayerMovement : MonoBehaviour
         if (other.TryGetComponent(out IInteractable interactable) &&
             interactable == nearbyInteractable)
             nearbyInteractable = null;
-    }
 
+        if (other.TryGetComponent(out Portal p) && p == nearbyPortal)
+            nearbyPortal = null;
+        
+    }
 
     public float HorizontalSpeed => Mathf.Abs(rb.velocity.x);
     public bool IsGrounded => isGrounded;
     public float VerticalVelocity => rb.velocity.y;
     public bool HasNearbyPickupable => nearbyPickupable != null;
     public bool HasNearbyInteractable => nearbyInteractable != null;
-
 
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()

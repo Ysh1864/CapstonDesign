@@ -198,33 +198,34 @@ public class PlayerMovement : MonoBehaviour
         //inventory.DropCurrent();
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.TryGetComponent(out IPickupable pickupable))
-            nearbyPickupable = pickupable;
 
-        if (other.TryGetComponent(out IInteractable interactable))
-            nearbyInteractable = interactable;
 
-        if (other.TryGetComponent(out Portal portal))
-            nearbyPortal = portal;
-        
-    }
+   private void OnTriggerEnter2D(Collider2D other)
+{
+    if (other.TryGetComponent(out IPickupable pickupable))
+        nearbyPickupable = pickupable;
+
+    if (other.TryGetComponent(out IInteractable interactable))
+        nearbyInteractable = interactable;
+
+    if (other.TryGetComponent(out Portal portal))   // ← 포탈 감지
+        nearbyPortal = portal;
+}
+
 
     private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.TryGetComponent(out IPickupable pickupable) &&
-            pickupable == nearbyPickupable)
-            nearbyPickupable = null;
+{
+    if (other.TryGetComponent(out IPickupable pickupable) &&
+        pickupable == nearbyPickupable)
+        nearbyPickupable = null;
 
-        if (other.TryGetComponent(out IInteractable interactable) &&
-            interactable == nearbyInteractable)
-            nearbyInteractable = null;
+    if (other.TryGetComponent(out IInteractable interactable) &&
+        interactable == nearbyInteractable)
+        nearbyInteractable = null;
 
-        if (other.TryGetComponent(out Portal p) && p == nearbyPortal)
-            nearbyPortal = null;
-        
-    }
+    if (other.TryGetComponent(out Portal p) && p == nearbyPortal)  // ← 포탈 감지 해제
+        nearbyPortal = null;
+}
 
     public float HorizontalSpeed => Mathf.Abs(rb.velocity.x);
     public bool IsGrounded => isGrounded;

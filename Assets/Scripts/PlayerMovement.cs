@@ -99,14 +99,14 @@ public class PlayerMovement : MonoBehaviour
         if (input > 0.01f) { FacingDirection = 1; transform.localScale = new Vector3(1f, 1f, 1f); }
         else if (input < -0.01f) { FacingDirection = -1; transform.localScale = new Vector3(-1f, 1f, 1f); }
 
-        /* if(input != 0)
+        if(input != 0)
          {
              animator.SetBool("isRunning", true);
          }
          else
          {
              animator.SetBool("isRunning", false);
-         }*/
+         }
     }
 
     private void HandleJumpInput()

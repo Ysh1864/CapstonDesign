@@ -3,22 +3,19 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-
 public class SceneTransition : MonoBehaviour
 {
-
     public static SceneTransition Instance { get; private set; }
 
-    [Header("Fade 패널 (전체 화면 검정 Image)")]
+    [Header("Fade 패널 (전체화면 검정 Image)")]
     [SerializeField] private Image fadePanel;
 
-    [Header("Fade 속도 (초)")]
+    [Header("Fade 지속 시간 (초)")]
     [SerializeField] private float fadeDuration = 0.6f;
 
     private bool isFading = false;
     private void Awake()
     {
-        // 싱글톤 처리 — 중복 방지
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -26,9 +23,12 @@ public class SceneTransition : MonoBehaviour
         }
 
         Instance = this;
+        transform.SetParent(null);
         DontDestroyOnLoad(gameObject);
 
-        // 시작 시 패널 투명하게
+        // fadePanel 없이 자동 생성된 경우 건너뜀
+        if (fadePanel == null) return;
+
         SetAlpha(0f);
         fadePanel.gameObject.SetActive(false);
     }
@@ -43,9 +43,9 @@ public class SceneTransition : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    // 씬 로드 완료 시 Fade In
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        if (fadePanel == null) return;
         StartCoroutine(FadeIn());
     }
 
@@ -60,19 +60,19 @@ public class SceneTransition : MonoBehaviour
         if (isFading) return;
         StartCoroutine(Transition(sceneIndex));
     }
-
     private IEnumerator Transition(string sceneName)
     {
         isFading = true;
-        yield return StartCoroutine(FadeOut());
+        if (fadePanel != null)
+            yield return StartCoroutine(FadeOut());
         SceneManager.LoadScene(sceneName);
-        // Fade In 은 OnSceneLoaded 에서 자동 실행
     }
 
     private IEnumerator Transition(int sceneIndex)
     {
         isFading = true;
-        yield return StartCoroutine(FadeOut());
+        if (fadePanel != null)
+            yield return StartCoroutine(FadeOut());
         SceneManager.LoadScene(sceneIndex);
     }
 
@@ -80,14 +80,12 @@ public class SceneTransition : MonoBehaviour
     {
         fadePanel.gameObject.SetActive(true);
         float elapsed = 0f;
-
         while (elapsed < fadeDuration)
         {
             elapsed += Time.deltaTime;
             SetAlpha(Mathf.Clamp01(elapsed / fadeDuration));
             yield return null;
         }
-
         SetAlpha(1f);
     }
 
@@ -95,7 +93,6 @@ public class SceneTransition : MonoBehaviour
     {
         SetAlpha(1f);
         fadePanel.gameObject.SetActive(true);
-
         float elapsed = 0f;
         while (elapsed < fadeDuration)
         {
@@ -103,11 +100,11 @@ public class SceneTransition : MonoBehaviour
             SetAlpha(1f - Mathf.Clamp01(elapsed / fadeDuration));
             yield return null;
         }
-
         SetAlpha(0f);
         fadePanel.gameObject.SetActive(false);
         isFading = false;
     }
+
     private void SetAlpha(float alpha)
     {
         if (fadePanel == null) return;

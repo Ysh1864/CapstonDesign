@@ -10,7 +10,10 @@ public class PlayerMovement : MonoBehaviour
     [Header("지면 감지")]
     [SerializeField] private Transform groundCheck;
 
-    [SerializeField] private Animator animator;
+    [Header("지면 감지")]
+    [SerializeField] private Animator aniRun;
+
+
     private Rigidbody2D rb;
     private PlayerInventory inventory;
     private bool isGrounded;
@@ -33,6 +36,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         inventory = GetComponent<PlayerInventory>();
+        //currentBattery = 
     }
 
     private void Update()
@@ -42,11 +46,13 @@ public class PlayerMovement : MonoBehaviour
         HandleJumpInput();
         HandleInteractInput();
         HandlePickupInput();
-        HandleDropInput();
         UpdateFacing();
 
         if (nearbyPortal != null)
             nearbyPortal.SetPlayerGrounded(isGrounded);
+
+        JumpAni();
+        Dead();
     }
 
     private void FixedUpdate()
@@ -101,11 +107,11 @@ public class PlayerMovement : MonoBehaviour
 
         if(input != 0)
          {
-             animator.SetBool("isRunning", true);
+            aniRun.SetBool("isRunning", true);
          }
          else
          {
-             animator.SetBool("isRunning", false);
+            aniRun.SetBool("isRunning", false);
          }
     }
 
@@ -190,15 +196,20 @@ public class PlayerMovement : MonoBehaviour
         nearbyPickupable.OnSwitch(this);
     }
 
-    private void HandleDropInput()
+    void JumpAni()
     {
-        if (!Input.GetKeyDown(KeyCode.G)) return;
-        if (inventory == null) return;
+        if(isJumping)
+        aniRun.SetBool("isJumping", true);
+        else
+        {
+            aniRun.SetBool("isJumping", false);
+        }
 
-        //inventory.DropCurrent();
     }
-
-
+    void Dead()
+    {
+        //animator.SetBool("Dead", true);
+    }
 
    private void OnTriggerEnter2D(Collider2D other)
 {

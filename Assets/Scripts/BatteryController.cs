@@ -16,7 +16,7 @@ public class BatteryController : MonoBehaviour
     [Header("배터리가 닳지 않는 씬 목록")]
     [SerializeField] private List<string> nonDrainingScenes = new List<string> { "MainMenu", "SafeZone" };
 
-    private float currentBattery;
+    float currentBattery;   //현재 배터리 잔량
     private int currentStage = 0;
     private Coroutine drainRoutine;
 

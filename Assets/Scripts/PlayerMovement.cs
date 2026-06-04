@@ -9,8 +9,6 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("지면 감지")]
     [SerializeField] private Transform groundCheck;
-
-    [Header("지면 감지")]
     [SerializeField] private Animator aniRun;
 
 
@@ -23,7 +21,7 @@ public class PlayerMovement : MonoBehaviour
     private float jumpBufferTimer;
     private float jumpHoldTimer;
     private bool isJumping;
-
+    private bool isDead = false;
     private IPickupable nearbyPickupable;
     private IInteractable nearbyInteractable;
 
@@ -38,9 +36,20 @@ public class PlayerMovement : MonoBehaviour
         inventory = GetComponent<PlayerInventory>();
         //currentBattery = 
     }
+    private void OnEnable()
+    {
+        BatteryController.OnBatteryEmpty += Dead;
+    }
+
+    private void OnDisable()
+    {
+        BatteryController.OnBatteryEmpty -= Dead;
+    }
 
     private void Update()
     {
+        if (isDead) return; // 죽었다면 입력 및 업데이트 중지
+
         UpdateGroundCheck();
         UpdateTimers();
         HandleJumpInput();
@@ -50,13 +59,12 @@ public class PlayerMovement : MonoBehaviour
 
         if (nearbyPortal != null)
             nearbyPortal.SetPlayerGrounded(isGrounded);
-
-        JumpAni();
-        Dead();
     }
 
     private void FixedUpdate()
     {
+        if (isDead) return; //죽었다면 물리 이동 중지
+
         HandleHorizontalMovement();
         ApplyGravity();
     }
@@ -77,6 +85,8 @@ public class PlayerMovement : MonoBehaviour
 
         if (isGrounded)
             coyoteTimer = stat.coyoteTime;
+
+        aniRun.SetBool("isJumping", !isGrounded); //점프 애니메이션 추가
     }
 
     private void UpdateTimers()
@@ -196,19 +206,21 @@ public class PlayerMovement : MonoBehaviour
         nearbyPickupable.OnSwitch(this);
     }
 
-    void JumpAni()
-    {
-        if(isJumping)
-        aniRun.SetBool("isJumping", true);
-        else
-        {
-            aniRun.SetBool("isJumping", false);
-        }
 
-    }
     void Dead()
     {
-        //animator.SetBool("Dead", true);
+        if (isDead) return;
+
+        isDead = true;
+   
+        Debug.Log("[PlayerMovement] 플레이어가 배터리 방전으로 사망했습니다.");
+
+        rb.velocity = Vector2.zero;
+        rb.bodyType = RigidbodyType2D.Kinematic;
+        aniRun.SetBool("isDead", true);
+            
+        // TODO: 게임 오버 UI
+
     }
 
    private void OnTriggerEnter2D(Collider2D other)

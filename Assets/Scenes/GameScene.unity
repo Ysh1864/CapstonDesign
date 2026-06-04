@@ -1275,8 +1275,9 @@ GameObject:
   m_Component:
   - component: {fileID: 882099406}
   - component: {fileID: 882099405}
-  - component: {fileID: 882099403}
   - component: {fileID: 882099407}
+  - component: {fileID: 882099408}
+  - component: {fileID: 882099403}
   m_Layer: 0
   m_Name: Battery
   m_TagString: Battery
@@ -1297,6 +1298,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rechargeAmount: 20
+  moveSpeed: 2
+  moveDistance: 0.1
 --- !u!212 &882099405
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1409,6 +1412,33 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.1892046, y: 0.5163708}
   m_EdgeRadius: 0
+--- !u!50 &882099408
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882099402}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &1256437842
 GameObject:
   m_ObjectHideFlags: 0
@@ -2035,6 +2065,6 @@ SceneRoots:
   - {fileID: 1718649092}
   - {fileID: 198045509}
   - {fileID: 754056993}
-  - {fileID: 633159839}
   - {fileID: 882099406}
   - {fileID: 1930954411}
+  - {fileID: 633159839}

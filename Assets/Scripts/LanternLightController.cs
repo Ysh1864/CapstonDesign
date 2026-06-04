@@ -1,7 +1,7 @@
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
+//using UnityEngine.Rendering.Universal;
 
-[RequireComponent(typeof(Light2D))]
+//[RequireComponent(typeof(Light2D))]
 public class LanternLightController : MonoBehaviour
 {
     [Header("Battery Source")]
@@ -23,14 +23,14 @@ public class LanternLightController : MonoBehaviour
     [SerializeField] private float flickerAmount = 0.08f;
     [SerializeField] private float flickerSpeed = 18f;
 
-    private Light2D lanternLight;
+    //private Light2D lanternLight;
     private float currentBattery = 100f;
     private float baseIntensity;
 
     private void Awake()
     {
-        lanternLight = GetComponent<Light2D>();
-        baseIntensity = lanternLight.intensity;
+        //lanternLight = GetComponent<Light2D>();
+        //baseIntensity = lanternLight.intensity;
 
         if (batteryController == null)
             batteryController = FindObjectOfType<BatteryController>();
@@ -57,7 +57,7 @@ public class LanternLightController : MonoBehaviour
         if (currentBattery > lowBatteryThreshold) return;
 
         float noise = Mathf.PerlinNoise(Time.time * flickerSpeed, 0f);
-        lanternLight.intensity = baseIntensity + ((noise - 0.5f) * flickerAmount);
+       // lanternLight.intensity = baseIntensity + ((noise - 0.5f) * flickerAmount);
     }
 
     private void HandleBatteryChanged(float batteryValue, int stageIndex)
@@ -70,9 +70,9 @@ public class LanternLightController : MonoBehaviour
     {
         float normalized = batteryValue / 100f;
 
-        lanternLight.pointLightOuterRadius = Mathf.Lerp(minOuterRadius, maxOuterRadius, normalized);
-        lanternLight.pointLightInnerRadius = Mathf.Lerp(minInnerRadius, maxInnerRadius, normalized);
+        //lanternLight.pointLightOuterRadius = Mathf.Lerp(minOuterRadius, maxOuterRadius, normalized);
+       // lanternLight.pointLightInnerRadius = Mathf.Lerp(minInnerRadius, maxInnerRadius, normalized);
         baseIntensity = Mathf.Lerp(minIntensity, maxIntensity, normalized);
-        lanternLight.intensity = baseIntensity;
+       // lanternLight.intensity = baseIntensity;
     }
 }

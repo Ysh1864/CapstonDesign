@@ -248,7 +248,8 @@ public class PlayerMovement : MonoBehaviour
 
     if (other.TryGetComponent(out Portal portal))   // ← 포탈 감지
         nearbyPortal = portal;
-    
+
+
 }
 
     private void OnTriggerExit2D(Collider2D other)

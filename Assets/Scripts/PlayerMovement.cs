@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using System.Collections;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PlayerInventory))]
@@ -26,7 +28,7 @@ public class PlayerMovement : MonoBehaviour
     private IInteractable nearbyInteractable;
 
     private Portal nearbyPortal;
-
+    private DeadUI deadUI;
 
     public event System.Action OnToolUsed;
 
@@ -34,17 +36,22 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         inventory = GetComponent<PlayerInventory>();
+        deadUI = FindObjectOfType<DeadUI>();
         //currentBattery = 
     }
     private void OnEnable()
     {
         BatteryController.OnBatteryEmpty += Dead;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDisable()
     {
         BatteryController.OnBatteryEmpty -= Dead;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
+
+ 
 
     private void Update()
     {
@@ -206,21 +213,29 @@ public class PlayerMovement : MonoBehaviour
         nearbyPickupable.OnSwitch(this);
     }
 
-
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        isDead = false;          // 사망 상태 해제
+        Time.timeScale = 1f;     // 멈췄던 유니티 게임 시간 재생
+    }
     void Dead()
     {
         if (isDead) return;
 
         isDead = true;
-   
+        aniRun.SetBool("isDead", true);
         Debug.Log("[PlayerMovement] 플레이어가 배터리 방전으로 사망했습니다.");
 
+        StartCoroutine(DelayedDead());
+    }
+
+    private IEnumerator DelayedDead()
+    {
+        yield return new WaitForSeconds(1f); // 1초 대기
         rb.velocity = Vector2.zero;
         rb.bodyType = RigidbodyType2D.Kinematic;
-        aniRun.SetBool("isDead", true);
-            
-        // TODO: 게임 오버 UI
-
+        deadUI.ShowDeadPanel();
+        Time.timeScale = 0f;
     }
 
    private void OnTriggerEnter2D(Collider2D other)

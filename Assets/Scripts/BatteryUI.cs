@@ -19,20 +19,13 @@ public class BatteryUI : MonoBehaviour
     [SerializeField] private float rechargeBlinkSpeed = 0.2f;
 
     private BatteryController controller;
-    private Coroutine warningBlinkRoutine;
-    private Coroutine effectBlinkRoutine;
-    private float timePerStage = 10f;
+    private Coroutine currentEffectRoutine; 
     private Color originalColor;
     private int currentStageIndex = 0;
-    private int previousStageIndex = 0;
 
     private void Awake()
     {
         controller = FindObjectOfType<BatteryController>();
-        if (controller != null)
-        {
-            timePerStage = controller.TimePerStage;
-        }
 
         if (batteryImage != null)
         {
@@ -42,59 +35,40 @@ public class BatteryUI : MonoBehaviour
 
     private void OnEnable()
     {
-        BatteryController.OnBatteryChanged += HandleBatteryChanged;
-        BatteryController.OnBatteryRecharged += HandleBatteryRecharged;
+        BatteryController.OnBatteryChanged += UpdateBatteryUI;
+        BatteryController.OnBatteryRecharged += PlayRechargeEffect;
     }
 
     private void OnDisable()
     {
-        BatteryController.OnBatteryChanged -= HandleBatteryChanged;
-        BatteryController.OnBatteryRecharged -= HandleBatteryRecharged;
+        BatteryController.OnBatteryChanged -= UpdateBatteryUI;
+        BatteryController.OnBatteryRecharged -= PlayRechargeEffect;
     }
 
-    private void HandleBatteryChanged(float currentBattery, int stageIndex) //배터리 단계 변경 시 UI 업데이트
+    // 🔴 배터리 수치가 실제로 변했을 때 실행되는 함수
+    private void UpdateBatteryUI(float currentBattery, int stage)
     {
-        previousStageIndex = currentStageIndex;
-
-        ResetAllVisuals();
-        currentStageIndex = stageIndex;
-
-        if (batterySprites != null && stageIndex < batterySprites.Length)
-        {
-            batteryImage.sprite = batterySprites[stageIndex];
-        }
-
-        if (stageIndex < 5)
-        {
-            warningBlinkRoutine = StartCoroutine(BlinkWarningSchedule());
-        }
-    }
-
-    private void HandleBatteryRecharged()   //배터리 충전 시 효과
-    {
-        if (warningBlinkRoutine != null) StopCoroutine(warningBlinkRoutine);
-        if (effectBlinkRoutine != null) StopCoroutine(effectBlinkRoutine);
-
+        if (currentEffectRoutine != null) StopCoroutine(currentEffectRoutine);
         if (batteryImage != null) batteryImage.color = originalColor;
 
-        effectBlinkRoutine = StartCoroutine(BlinkRechargeEffect());
-    }
+        currentStageIndex = Mathf.Clamp(stage, 0, batterySprites.Length - 1);
 
-    private void ResetAllVisuals()  //모든 시각적 효과 초기화
-    {
-        if (warningBlinkRoutine != null) StopCoroutine(warningBlinkRoutine);
-        if (effectBlinkRoutine != null) StopCoroutine(effectBlinkRoutine);
-
-        if (batteryImage != null)
+        if (batteryImage != null && batterySprites != null && currentStageIndex < batterySprites.Length)
         {
-            batteryImage.color = originalColor;
-            batteryImage.enabled = true;
+            batteryImage.sprite = batterySprites[currentStageIndex];
+        }
+
+        if (controller != null && currentStageIndex < 5)
+        {
+            currentEffectRoutine = StartCoroutine(ReadyForWarningBlink());
         }
     }
 
-    private IEnumerator BlinkWarningSchedule()  //배터리 감소 경고 이펙트
+    private IEnumerator ReadyForWarningBlink()
     {
+        float timePerStage = controller.TimePerStage;
         float waitTime = timePerStage - blinkBeforeSeconds;
+
         if (waitTime > 0f)
         {
             yield return new WaitForSeconds(waitTime);
@@ -106,29 +80,25 @@ public class BatteryUI : MonoBehaviour
         while (elapsed < blinkBeforeSeconds)
         {
             isToggled = !isToggled;
-
-            if (currentStageIndex == 4)
+            if (batteryImage != null)
             {
                 batteryImage.color = isToggled ? warningFlashColor : originalColor;
-            }
-            else
-            {
-                batteryImage.color = originalColor;
-
-                if (batterySprites != null && currentStageIndex + 1 < batterySprites.Length)
-                {
-                    batteryImage.sprite = isToggled ? batterySprites[currentStageIndex + 1] : batterySprites[currentStageIndex];
-                }
             }
 
             yield return new WaitForSeconds(blinkSpeed);
             elapsed += blinkSpeed;
         }
 
-        batteryImage.color = originalColor;
+        if (batteryImage != null) batteryImage.color = originalColor;
     }
 
-    private IEnumerator BlinkRechargeEffect()   //배터리 충전 이펙트
+    private void PlayRechargeEffect()
+    {
+        if (currentEffectRoutine != null) StopCoroutine(currentEffectRoutine);
+        currentEffectRoutine = StartCoroutine(BlinkRechargeEffect());
+    }
+
+    private IEnumerator BlinkRechargeEffect()
     {
         float elapsed = 0f;
         bool isToggled = false;
@@ -136,35 +106,27 @@ public class BatteryUI : MonoBehaviour
         while (elapsed < rechargeBlinkDuration)
         {
             isToggled = !isToggled;
-
-            if (currentStageIndex == 0 && previousStageIndex == 0)
+            if (batteryImage != null)
             {
                 batteryImage.color = isToggled ? rechargeFlashColor : originalColor;
-            }
-            else
-            {
-                batteryImage.color = originalColor;
-
-                if (batterySprites != null)
-                {
-                    batteryImage.sprite = isToggled ? batterySprites[previousStageIndex] : batterySprites[currentStageIndex];
-                }
             }
 
             yield return new WaitForSeconds(rechargeBlinkSpeed);
             elapsed += rechargeBlinkSpeed;
         }
 
-        batteryImage.color = originalColor;
-        if (batterySprites != null && currentStageIndex < batterySprites.Length)
+        if (batteryImage != null)
         {
-            batteryImage.sprite = batterySprites[currentStageIndex];
+            batteryImage.color = originalColor;
+            if (batterySprites != null && currentStageIndex < batterySprites.Length)
+            {
+                batteryImage.sprite = batterySprites[currentStageIndex];
+            }
         }
 
-        if (controller != null)
+        if (currentStageIndex < 5)
         {
-            if (warningBlinkRoutine != null) StopCoroutine(warningBlinkRoutine);
-            warningBlinkRoutine = StartCoroutine(BlinkWarningSchedule());
+            currentEffectRoutine = StartCoroutine(ReadyForWarningBlink());
         }
     }
 }

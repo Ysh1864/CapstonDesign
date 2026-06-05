@@ -25,7 +25,6 @@ public class BatteryController : MonoBehaviour
     private Coroutine drainRoutine;
 
     public float TimePerStage => timePerStage;
-    private string previousSceneName;   //이전 씬 이름 추적
 
     private void Awake()
     {
@@ -116,35 +115,35 @@ public class BatteryController : MonoBehaviour
         }
     }
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+public void ReviveAndResetBattery() // 부활 시 배터리 초기화
+    {
+        if (drainRoutine != null) StopCoroutine(drainRoutine);
+
+        currentBattery = maxBattery; // 배터리 100% 완충
+        currentStage = 0;
+        OnBatteryChanged?.Invoke(currentBattery, currentStage);
+        
+        string currentSceneName = SceneManager.GetActiveScene().name;
+        if (!nonDrainingScenes.Contains(currentSceneName))
+        {
+            drainRoutine = StartCoroutine(DrainBatteryRoutine());
+            Debug.Log("[BatteryController] 인게임 스테이지 부활: 배터리 감소 코루틴 재개.");
+        }
+    }
+
+private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (drainRoutine != null) StopCoroutine(drainRoutine);  
 
-        // 이전 씬과 현재 씬의 이름이 같다면
-        if (scene.name == previousSceneName)
+        if (nonDrainingScenes.Contains(scene.name)) 
         {
-            currentBattery = maxBattery; // 배터리를 처음부터 다시 가득 채웁니다.
+            currentBattery = maxBattery;
             currentStage = 0;
-            Debug.Log($"[BatteryController] 동일 씬 재시작 감지: 배터리 100% 리셋.");
-        }
-        else
-        {
-            //다른 맵으로 이동한 경우 기존 배터리 잔량을 그대로 유지하되, 안전 구역인지만 체크합니다.
-            if (nonDrainingScenes.Contains(scene.name)) 
-            {
-                currentBattery = maxBattery;
-                currentStage = 0;
-                Debug.Log($"[BatteryController] 안전 구역 '{scene.name}' 진입: 배터리 100% 고정.");
-            }
+            Debug.Log($"[BatteryController] 안전 구역 '{scene.name}' 진입: 배터리 100% 고정.");
         }
 
-        // 현재 씬 이름을 다음 전환을 위해 저장해둡니다.
-        previousSceneName = scene.name; 
-
-        // UI에 현재 배터리 상태를 강제로 동기화 신호 전송
         OnBatteryChanged?.Invoke(currentBattery, currentStage);
 
-        // 안전 구역이 아니라면 감소 코루틴 재개
         if (!nonDrainingScenes.Contains(scene.name))
         {
             drainRoutine = StartCoroutine(DrainBatteryRoutine());   

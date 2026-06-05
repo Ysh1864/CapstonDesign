@@ -11,6 +11,12 @@ public class DeadUIButtons : MonoBehaviour
     public void RetryButton()
     {
         Time.timeScale = 1f;
+
+        if (BatteryController.Instance != null)
+        {
+            BatteryController.Instance.ReviveAndResetBattery();
+        }
+
         SceneManager.LoadScene(sceneName);
     }
 

@@ -13,7 +13,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private Animator aniRun;
 
-
     private Rigidbody2D rb;
     private PlayerInventory inventory;
     private bool isGrounded;
@@ -37,8 +36,8 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         inventory = GetComponent<PlayerInventory>();
         deadUI = FindObjectOfType<DeadUI>();
-        //currentBattery = 
     }
+
     private void OnEnable()
     {
         BatteryController.OnBatteryEmpty += Dead;
@@ -50,8 +49,6 @@ public class PlayerMovement : MonoBehaviour
         BatteryController.OnBatteryEmpty -= Dead;
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
-
- 
 
     private void Update()
     {
@@ -70,7 +67,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isDead) return; //죽었다면 물리 이동 중지
+        if (isDead) return; // 죽었다면 물리 이동 중지
 
         HandleHorizontalMovement();
         ApplyGravity();
@@ -93,7 +90,7 @@ public class PlayerMovement : MonoBehaviour
         if (isGrounded)
             coyoteTimer = stat.coyoteTime;
 
-        aniRun.SetBool("isJumping", !isGrounded); //점프 애니메이션 추가
+        aniRun.SetBool("isJumping", !isGrounded); // 점프 애니메이션 추가
     }
 
     private void UpdateTimers()
@@ -122,14 +119,14 @@ public class PlayerMovement : MonoBehaviour
         if (input > 0.01f) { FacingDirection = 1; transform.localScale = new Vector3(1f, 1f, 1f); }
         else if (input < -0.01f) { FacingDirection = -1; transform.localScale = new Vector3(-1f, 1f, 1f); }
 
-        if(input != 0)
-         {
+        if (input != 0)
+        {
             aniRun.SetBool("isRunning", true);
-         }
-         else
-         {
+        }
+        else
+        {
             aniRun.SetBool("isRunning", false);
-         }
+        }
     }
 
     private void HandleJumpInput()
@@ -215,9 +212,15 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        isDead = false;          // 사망 상태 해제
-        Time.timeScale = 1f;     // 멈췄던 유니티 게임 시간 재생
+        isDead = false;
+        Time.timeScale = 1f;
+
+        if (BatteryController.Instance != null)
+        {
+            BatteryController.Instance.ReviveAndResetBattery();
+        }
     }
+
     void Dead()
     {
         if (isDead) return;
@@ -238,33 +241,31 @@ public class PlayerMovement : MonoBehaviour
         Time.timeScale = 0f;
     }
 
-   private void OnTriggerEnter2D(Collider2D other)
-{
-    if (other.TryGetComponent(out IPickupable pickupable))
-        nearbyPickupable = pickupable;
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.TryGetComponent(out IPickupable pickupable))
+            nearbyPickupable = pickupable;
 
-    if (other.TryGetComponent(out IInteractable interactable))
-        nearbyInteractable = interactable;
+        if (other.TryGetComponent(out IInteractable interactable))
+            nearbyInteractable = interactable;
 
-    if (other.TryGetComponent(out Portal portal))   // ← 포탈 감지
-        nearbyPortal = portal;
-
-
-}
+        if (other.TryGetComponent(out Portal portal))   // ← 포탈 감지
+            nearbyPortal = portal;
+    }
 
     private void OnTriggerExit2D(Collider2D other)
-{
-    if (other.TryGetComponent(out IPickupable pickupable) &&
-        pickupable == nearbyPickupable)
-        nearbyPickupable = null;
+    {
+        if (other.TryGetComponent(out IPickupable pickupable) &&
+            pickupable == nearbyPickupable)
+            nearbyPickupable = null;
 
-    if (other.TryGetComponent(out IInteractable interactable) &&
-        interactable == nearbyInteractable)
-        nearbyInteractable = null;
+        if (other.TryGetComponent(out IInteractable interactable) &&
+            interactable == nearbyInteractable)
+            nearbyInteractable = null;
 
-    if (other.TryGetComponent(out Portal p) && p == nearbyPortal)  // ← 포탈 감지 해제
-        nearbyPortal = null;
-}
+        if (other.TryGetComponent(out Portal p) && p == nearbyPortal)  // ← 포탈 감지 해제
+            nearbyPortal = null;
+    }
 
     public float HorizontalSpeed => Mathf.Abs(rb.velocity.x);
     public bool IsGrounded => isGrounded;

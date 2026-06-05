@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class BatteryItem : MonoBehaviour
 {
-    [Header("배터리 충전량")]
-
     [Header("위아래 부유 연출 설정")]
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float moveDistance = 0.2f;
@@ -20,7 +18,6 @@ public class BatteryItem : MonoBehaviour
     {
         OnMove();
     }
-
 
     private void OnMove()   // 배터리 아이템이 위아래로 부유하는 연출
     {

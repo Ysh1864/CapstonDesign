@@ -857,6 +857,8 @@ GameObject:
   - component: {fileID: 519420032}
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
+  - component: {fileID: 519420034}
+  - component: {fileID: 519420033}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -938,6 +940,41 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &519420033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 693d1f63add48844bb910efe3e91395e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultDuration: 0.2
+  defaultMagnitude: 0.15
+--- !u!114 &519420034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e547ad6de17f3a64eaf1e7127ed2db6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 1718649092}
+  offset: {x: 0, y: 1.5, z: -10}
+  useSmoothFollow: 1
+  smoothTime: 0.15
+  lookAheadDistance: 1.2
+  lookAheadSmooth: 3
+  useBounds: 0
+  minBounds: {x: 0, y: 0}
+  maxBounds: {x: 0, y: 0}
 --- !u!1 &633159837
 GameObject:
   m_ObjectHideFlags: 0
@@ -948,6 +985,7 @@ GameObject:
   m_Component:
   - component: {fileID: 633159839}
   - component: {fileID: 633159838}
+  - component: {fileID: 633159840}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -985,6 +1023,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &633159840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 633159837}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 638f13eb6c8fc2749b61feedd98837a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameOverSceneName: MainMenuScene
+  reloadCurrentSceneIfMissing: 1
+  freezeTimeOnGameOver: 1
 --- !u!1 &713983335
 GameObject:
   m_ObjectHideFlags: 0
@@ -1278,6 +1331,7 @@ GameObject:
   - component: {fileID: 882099407}
   - component: {fileID: 882099408}
   - component: {fileID: 882099403}
+  - component: {fileID: 882099409}
   m_Layer: 0
   m_Name: Battery
   m_TagString: Battery
@@ -1297,7 +1351,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2e16a8370fc7904fa924e7139a77ef5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rechargeAmount: 20
   moveSpeed: 2
   moveDistance: 0.1
 --- !u!212 &882099405
@@ -1439,6 +1492,21 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &882099409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882099402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55f4d833abfb5154c9db57c447290858, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rechargeAmount: 20
+  batteryController: {fileID: 633159838}
+  destroyOnPickup: 1
 --- !u!1 &1256437842
 GameObject:
   m_ObjectHideFlags: 0
@@ -1650,6 +1718,8 @@ GameObject:
   - component: {fileID: 1718649095}
   - component: {fileID: 1718649094}
   - component: {fileID: 1718649093}
+  - component: {fileID: 1718649098}
+  - component: {fileID: 1718649097}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1835,6 +1905,79 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 1, y: 2}
   m_Direction: 0
+--- !u!114 &1718649097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1718649089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cddd4337748baf4a8b1dbe57fe25fa6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  batteryController: {fileID: 633159838}
+  maxOuterRadius: 7
+  minOuterRadius: 1.2
+  maxInnerRadius: 2.4
+  minInnerRadius: 0.3
+  maxIntensity: 1.2
+  minIntensity: 0.2
+  useFlickerWhenLow: 1
+  lowBatteryThreshold: 20
+  flickerAmount: 0.08
+  flickerSpeed: 18
+--- !u!114 &1718649098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1718649089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 073797afb82c5a1438f328866b10b3f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ComponentVersion: 1
+  m_LightType: 3
+  m_BlendStyleIndex: 0
+  m_FalloffIntensity: 0.5
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Intensity: 1
+  m_LightVolumeIntensity: 1
+  m_LightVolumeIntensityEnabled: 0
+  m_ApplyToSortingLayers: 1b37366a0000000011e6ecb0
+  m_LightCookieSprite: {fileID: 0}
+  m_DeprecatedPointLightCookieSprite: {fileID: 0}
+  m_LightOrder: 0
+  m_AlphaBlendOnOverlap: 0
+  m_OverlapOperation: 0
+  m_NormalMapDistance: 3
+  m_NormalMapQuality: 2
+  m_UseNormalMap: 0
+  m_ShadowIntensityEnabled: 0
+  m_ShadowIntensity: 0.75
+  m_ShadowVolumeIntensityEnabled: 0
+  m_ShadowVolumeIntensity: 0.75
+  m_LocalBounds:
+    m_Center: {x: 0, y: -0.00000011920929, z: 0}
+    m_Extent: {x: 0.9985302, y: 0.99853027, z: 0}
+  m_PointLightInnerAngle: 360
+  m_PointLightOuterAngle: 360
+  m_PointLightInnerRadius: 0
+  m_PointLightOuterRadius: 1
+  m_ShapeLightParametricSides: 5
+  m_ShapeLightParametricAngleOffset: 0
+  m_ShapeLightParametricRadius: 1
+  m_ShapeLightFalloffSize: 0.5
+  m_ShapeLightFalloffOffset: {x: 0, y: 0}
+  m_ShapePath:
+  - {x: -0.5, y: -0.5, z: 0}
+  - {x: 0.5, y: -0.5, z: 0}
+  - {x: 0.5, y: 0.5, z: 0}
+  - {x: -0.5, y: 0.5, z: 0}
 --- !u!1 &1843303858
 GameObject:
   m_ObjectHideFlags: 0

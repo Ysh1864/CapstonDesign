@@ -9,7 +9,12 @@ public class BatteryController : MonoBehaviour
     public static BatteryController Instance { get; private set; }
     public static event Action<float, int> OnBatteryChanged;
     public static event Action OnBatteryRecharged; // 충전 시 이벤트
-    public static event Action OnBatteryEmpty; // 방전 시 발생할 이벤트
+    public static event Action OnBatteryEmpty; // 방전 시 발생, 게임 오버 핸들러는 이 이벤트만 구독해야 합니다.
+
+    // 해결: 게임 오버 처리는 배터리 수치 변경 이벤트(OnBatteryChanged)가 아니라
+    // 방전 이벤트(OnBatteryEmpty)를 구독하는 것이 더 안전합니다.
+    // OnBatteryChanged는 재충전, 안전 구역 진입, 초기화 등으로도 호출되므로
+    // GameOverHandler가 잘못된 타이밍에 반응하는 충돌 지점이 될 수 있습니다.
 
     [Header("배터리 설정")]
     [SerializeField] private float maxBattery = 100f;   //최대 배터리 양

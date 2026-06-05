@@ -235,7 +235,6 @@ public class PlayerMovement : MonoBehaviour
         nearbyPortal = portal;
 }
 
-
     private void OnTriggerExit2D(Collider2D other)
 {
     if (other.TryGetComponent(out IPickupable pickupable) &&

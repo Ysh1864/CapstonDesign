@@ -255,6 +255,7 @@ GameObject:
   - component: {fileID: 198045508}
   - component: {fileID: 198045507}
   - component: {fileID: 198045506}
+  - component: {fileID: 198045510}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -339,6 +340,7 @@ RectTransform:
   m_Children:
   - {fileID: 1256437843}
   - {fileID: 497654403}
+  - {fileID: 1654027389}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -9331,6 +9333,8 @@ GameObject:
   - component: {fileID: 1718649095}
   - component: {fileID: 1718649094}
   - component: {fileID: 1718649093}
+  - component: {fileID: 1718649098}
+  - component: {fileID: 1718649097}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player

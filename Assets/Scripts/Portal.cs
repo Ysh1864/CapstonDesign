@@ -47,6 +47,10 @@ public class Portal : MonoBehaviour
         Debug.Log($"[Portal] 플레이어 진입 → {gameObject.name}");
     }
 
+    // 해결: Portal과 PlayerMovement가 모두 포탈 진입/퇴장을 감지하면 중복 충돌 이벤트가 발생할 수 있습니다.
+    // 하나의 컴포넌트에서만 포탈 진입 상태를 관리하도록 설계하세요.
+    // 예) Portal에서는 playerInside/isGrounded 상태만 관리하고, PlayerMovement에서는 포탈 감지 코드를 제거합니다.
+
     private void OnTriggerExit2D(Collider2D other)
     {
         if (!other.CompareTag("Player")) return;
@@ -55,6 +59,8 @@ public class Portal : MonoBehaviour
         isGrounded = false;
         Debug.Log($"[Portal] 플레이어 퇴장 → {gameObject.name}");
     }
+
+    // 해결: 포탈 퇴장 감지 역시 Portal에서만 유지해야 합니다. PlayerMovement에서 이중으로 처리될 경우 충돌 처리 순서에 따라 오작동이 발생할 수 있습니다.
 
     public void SetPlayerGrounded(bool grounded)
     {

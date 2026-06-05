@@ -9,20 +9,23 @@ public class BatteryController : MonoBehaviour
     public static BatteryController Instance { get; private set; }
     public static event Action<float, int> OnBatteryChanged;
     public static event Action OnBatteryRecharged; // 충전 시 이벤트
-    public static event Action OnBatteryEmpty; // 방전 시 발생할 이벤트
+    public static event Action OnBatteryEmpty; // 방전 시 발생,
+
 
     [Header("배터리 설정")]
     [SerializeField] private float maxBattery = 100f;   //최대 배터리 양
     [SerializeField] private float timePerStage = 10f;  // timePerStage초 마다 20(한 칸) 감소
 
+
     [Header("배터리가 닳지 않는 씬 목록")]
     [SerializeField] private List<string> nonDrainingScenes = new List<string> { "MainMenu", "SafeZone" };
+    private float currentBattery;   //현재 배터리 잔량
 
-    float currentBattery;   //현재 배터리 잔량
     private int currentStage = 0;   //배터리 단계
     private Coroutine drainRoutine;
 
     public float TimePerStage => timePerStage;
+    private string previousSceneName;   //이전 씬 이름 추적
 
     private void Awake()
     {
@@ -76,9 +79,10 @@ public class BatteryController : MonoBehaviour
 
         Debug.Log("[BatteryController] 배터리가 완전히 방전되었습니다.");
         OnBatteryEmpty?.Invoke(); //방전 이벤트
+
     }
 
-public void Recharge(float amount)  //배터리 충전
+    public void Recharge(float amount)  //배터리 충전
     {
         string currentSceneName = SceneManager.GetActiveScene().name;
         if (nonDrainingScenes.Contains(currentSceneName)) return;
@@ -114,16 +118,36 @@ public void Recharge(float amount)  //배터리 충전
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (drainRoutine != null) StopCoroutine(drainRoutine);  //씬 전환 시 코루틴 중지(배터리 감소)
+        if (drainRoutine != null) StopCoroutine(drainRoutine);  
 
-        if (nonDrainingScenes.Contains(scene.name)) //안전 구역 확인 및 배터리 100% 고정
+        // 이전 씬과 현재 씬의 이름이 같다면
+        if (scene.name == previousSceneName)
         {
-            currentBattery = maxBattery;
+            currentBattery = maxBattery; // 배터리를 처음부터 다시 가득 채웁니다.
             currentStage = 0;
-            OnBatteryChanged?.Invoke(currentBattery, currentStage);
-            Debug.Log($"[BatteryController] 안전 구역 '{scene.name}' 진입: 배터리 100% 고정.");
-            return; 
+            Debug.Log($"[BatteryController] 동일 씬 재시작 감지: 배터리 100% 리셋.");
         }
-        drainRoutine = StartCoroutine(DrainBatteryRoutine());   //안전 구역 아니라면 배터리 감소 재개
+        else
+        {
+            //다른 맵으로 이동한 경우 기존 배터리 잔량을 그대로 유지하되, 안전 구역인지만 체크합니다.
+            if (nonDrainingScenes.Contains(scene.name)) 
+            {
+                currentBattery = maxBattery;
+                currentStage = 0;
+                Debug.Log($"[BatteryController] 안전 구역 '{scene.name}' 진입: 배터리 100% 고정.");
+            }
+        }
+
+        // 현재 씬 이름을 다음 전환을 위해 저장해둡니다.
+        previousSceneName = scene.name; 
+
+        // UI에 현재 배터리 상태를 강제로 동기화 신호 전송
+        OnBatteryChanged?.Invoke(currentBattery, currentStage);
+
+        // 안전 구역이 아니라면 감소 코루틴 재개
+        if (!nonDrainingScenes.Contains(scene.name))
+        {
+            drainRoutine = StartCoroutine(DrainBatteryRoutine());   
+        }
     }
 }

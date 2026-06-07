@@ -8,12 +8,17 @@ public class BatteryUI : MonoBehaviour
     [SerializeField] private Image batteryImage;
     [SerializeField] private Sprite[] batterySprites;
 
-    [Header("감소 경고 설정")]
+    [Header("칸 감소 피드백 설정 (점멸기능)")]
+    [SerializeField] private bool useDrainFeedback = true;      // 연출 사용 여부
+    [SerializeField] private float drainBlinkDuration = 0.6f; // 총 깜빡임 시간
+    [SerializeField] private float drainBlinkSpeed = 0.15f;   // 깜빡임 속도
+
+    [Header("감소 경고 설정 (10f 이하)")]
+    [SerializeField] private float warningThreshold = 10f; 
     [SerializeField] private Color warningFlashColor = Color.red;
-    [SerializeField] private float blinkBeforeSeconds = 2f;
     [SerializeField] private float blinkSpeed = 0.4f;
 
-    [Header("획득 충전 설정")]
+    [Header("획득 충전 설정 (완충)")]
     [SerializeField] private Color rechargeFlashColor = Color.green;
     [SerializeField] private float rechargeBlinkDuration = 0.8f;
     [SerializeField] private float rechargeBlinkSpeed = 0.2f;
@@ -21,7 +26,10 @@ public class BatteryUI : MonoBehaviour
     private BatteryController controller;
     private Coroutine currentEffectRoutine; 
     private Color originalColor;
-    private int currentStageIndex = 0;
+    
+    private int currentStageIndex = 5;
+    private bool isWarningBlinking = false; 
+    private bool isDrainBlinking = false;
 
     private void Awake()
     {
@@ -47,72 +55,105 @@ public class BatteryUI : MonoBehaviour
 
     private void UpdateBatteryUI(float currentBattery, int stage)
     {
-        if (currentEffectRoutine != null) StopCoroutine(currentEffectRoutine);
-        if (batteryImage != null) batteryImage.color = originalColor;
+        int newStageIndex = Mathf.Clamp(stage, 0, batterySprites.Length - 1);
 
-        currentStageIndex = Mathf.Clamp(stage, 0, batterySprites.Length - 1);
-
-        if (batteryImage != null && batterySprites != null && currentStageIndex < batterySprites.Length)
+        if (useDrainFeedback && newStageIndex < currentStageIndex && 
+            !isDrainBlinking && currentEffectRoutine == null && !isWarningBlinking)
         {
-            batteryImage.sprite = batterySprites[currentStageIndex];
+            currentEffectRoutine = StartCoroutine(DrainStageBlinkRoutine(currentStageIndex, newStageIndex));
         }
 
-        if (controller != null && currentStageIndex < 5)
+        currentStageIndex = newStageIndex;
+
+        if (!isDrainBlinking && !isWarningBlinking && currentEffectRoutine == null)
         {
-            currentEffectRoutine = StartCoroutine(ReadyForWarningBlink());
+            if (batteryImage != null && batterySprites != null)
+            {
+                batteryImage.sprite = batterySprites[currentStageIndex];
+                batteryImage.color = originalColor;
+            }
+        }
+
+        if (currentBattery <= warningThreshold && currentBattery > 0f)
+        {
+            if (!isWarningBlinking && !isDrainBlinking)
+            {
+                if (currentEffectRoutine != null) StopCoroutine(currentEffectRoutine);
+                currentEffectRoutine = StartCoroutine(RealtimeWarningBlinkRoutine());
+            }
+        }
+        else
+        {
+            if (currentBattery <= 0f || currentBattery > warningThreshold)
+            {
+                if (isWarningBlinking)
+                {
+                    isWarningBlinking = false;
+                    if (currentEffectRoutine != null) StopCoroutine(currentEffectRoutine);
+                    currentEffectRoutine = null;
+                    batteryColorReset();
+                }
+            }
         }
     }
 
-    private IEnumerator ReadyForWarningBlink()
+    private IEnumerator DrainStageBlinkRoutine(int oldIndex, int newIndex)
     {
-        float timePerStage = controller.TimePerStage;
-        float waitTime = timePerStage - blinkBeforeSeconds;
-
-        if (waitTime > 0f)
-        {
-            yield return new WaitForSeconds(waitTime);
-        }
-
-        float elapsed = 0f;
+        isDrainBlinking = true;
         bool isToggled = false;
+        float elapsed = 0f;
 
-        int currentSpriteIdx = currentStageIndex;
-        int nextSpriteIdx = Mathf.Clamp(currentStageIndex + 1, 0, batterySprites.Length - 1);
-
-        while (elapsed < blinkBeforeSeconds)
+        while (elapsed < drainBlinkDuration)
         {
             isToggled = !isToggled;
-            
+
+            if (batteryImage != null && batterySprites != null)
+            {
+                batteryImage.sprite = isToggled ? batterySprites[newIndex] : batterySprites[oldIndex];
+                batteryImage.color = originalColor; // 색상은 유지
+            }
+
+            yield return new WaitForSeconds(drainBlinkSpeed);
+            elapsed += drainBlinkSpeed;
+        }
+
+        isDrainBlinking = false;
+        currentEffectRoutine = null;
+        if (batteryImage != null && batterySprites != null)
+        {
+            batteryImage.sprite = batterySprites[currentStageIndex];
+        }
+    }
+
+    private IEnumerator RealtimeWarningBlinkRoutine()
+    {
+        isWarningBlinking = true;
+        bool isToggled = false;
+
+        int currentSpriteIdx = 1; 
+        int nextSpriteIdx = 0;     
+
+        while (isWarningBlinking)
+        {
+            isToggled = !isToggled;
+
             if (batteryImage != null && batterySprites != null)
             {
                 batteryImage.sprite = isToggled ? batterySprites[nextSpriteIdx] : batterySprites[currentSpriteIdx];
-                
-                if (currentStageIndex == 4)
-                {
-                    batteryImage.color = isToggled ? warningFlashColor : originalColor;
-                }
-                else
-                {
-                    batteryImage.color = originalColor;
-                }
+                batteryImage.color = isToggled ? warningFlashColor : originalColor;
             }
 
             yield return new WaitForSeconds(blinkSpeed);
-            elapsed += blinkSpeed;
-        }
-
-        if (batteryImage != null && batterySprites != null)
-        {
-            batteryImage.color = originalColor;
-            batteryImage.sprite = batterySprites[nextSpriteIdx];
         }
     }
 
     private void PlayRechargeEffect()
     {
+        isWarningBlinking = false;
+        isDrainBlinking = false;
         if (currentEffectRoutine != null) StopCoroutine(currentEffectRoutine);
 
-        if (currentStageIndex == 0)
+        if (currentStageIndex == 5)
         {
             currentEffectRoutine = StartCoroutine(BlinkRechargeEffect());
         }
@@ -137,16 +178,18 @@ public class BatteryUI : MonoBehaviour
 
         if (batteryImage != null)
         {
-            batteryImage.color = originalColor;
-            if (batterySprites != null && currentStageIndex < batterySprites.Length)
-            {
-                batteryImage.sprite = batterySprites[currentStageIndex];
-            }
+            batteryColorReset();
         }
 
-        if (currentStageIndex < 5)
+        currentEffectRoutine = null;
+    }
+
+    private void batteryColorReset()
+    {
+        batteryImage.color = originalColor;
+        if (batterySprites != null && currentStageIndex < batterySprites.Length)
         {
-            currentEffectRoutine = StartCoroutine(ReadyForWarningBlink());
+            batteryImage.sprite = batterySprites[currentStageIndex];
         }
     }
 }

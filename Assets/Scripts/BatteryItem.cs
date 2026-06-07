@@ -6,6 +6,9 @@ public class BatteryItem : MonoBehaviour, IInteractable
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float moveDistance = 0.2f;
 
+    [Header("배터리 충전량")]
+    [SerializeField] private float chargeAmount = 20f;
+
     private Rigidbody2D rb;
     private Vector3 startPosition;
     private void Awake()
@@ -29,7 +32,7 @@ public class BatteryItem : MonoBehaviour, IInteractable
     {
         if (BatteryController.Instance != null)
         {
-            BatteryController.Instance.Recharge(20f);
+            BatteryController.Instance.Recharge(chargeAmount);
             Destroy(gameObject);
         }
         else

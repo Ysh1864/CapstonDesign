@@ -212,6 +212,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        rb = GetComponent<Rigidbody2D>();
         deadUI = FindObjectOfType<DeadUI>();
 
         isDead = false;
@@ -239,7 +240,7 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator DelayedDead()
     {
-        yield return new WaitForSeconds(2f); // 2초 대기
+        yield return new WaitForSeconds(3f); // 2초 대기
         rb.velocity = Vector2.zero;
         rb.bodyType = RigidbodyType2D.Kinematic;
         deadUI.ShowDeadPanel();

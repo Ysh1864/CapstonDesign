@@ -45,7 +45,6 @@ public class BatteryUI : MonoBehaviour
         BatteryController.OnBatteryRecharged -= PlayRechargeEffect;
     }
 
-    // 🔴 배터리 수치가 실제로 변했을 때 실행되는 함수
     private void UpdateBatteryUI(float currentBattery, int stage)
     {
         if (currentEffectRoutine != null) StopCoroutine(currentEffectRoutine);
@@ -77,25 +76,46 @@ public class BatteryUI : MonoBehaviour
         float elapsed = 0f;
         bool isToggled = false;
 
+        int currentSpriteIdx = currentStageIndex;
+        int nextSpriteIdx = Mathf.Clamp(currentStageIndex + 1, 0, batterySprites.Length - 1);
+
         while (elapsed < blinkBeforeSeconds)
         {
             isToggled = !isToggled;
-            if (batteryImage != null)
+            
+            if (batteryImage != null && batterySprites != null)
             {
-                batteryImage.color = isToggled ? warningFlashColor : originalColor;
+                batteryImage.sprite = isToggled ? batterySprites[nextSpriteIdx] : batterySprites[currentSpriteIdx];
+                
+                if (currentStageIndex == 4)
+                {
+                    batteryImage.color = isToggled ? warningFlashColor : originalColor;
+                }
+                else
+                {
+                    batteryImage.color = originalColor;
+                }
             }
 
             yield return new WaitForSeconds(blinkSpeed);
             elapsed += blinkSpeed;
         }
 
-        if (batteryImage != null) batteryImage.color = originalColor;
+        if (batteryImage != null && batterySprites != null)
+        {
+            batteryImage.color = originalColor;
+            batteryImage.sprite = batterySprites[nextSpriteIdx];
+        }
     }
 
     private void PlayRechargeEffect()
     {
         if (currentEffectRoutine != null) StopCoroutine(currentEffectRoutine);
-        currentEffectRoutine = StartCoroutine(BlinkRechargeEffect());
+
+        if (currentStageIndex == 0)
+        {
+            currentEffectRoutine = StartCoroutine(BlinkRechargeEffect());
+        }
     }
 
     private IEnumerator BlinkRechargeEffect()

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CameraFollow2D : MonoBehaviour
 {
@@ -21,13 +22,44 @@ public class CameraFollow2D : MonoBehaviour
     [SerializeField] private Vector2 minBounds;
     [SerializeField] private Vector2 maxBounds;
 
+    private static CameraFollow2D instance; //추가 싱글톤
     private Vector3 velocity;
     private float currentLookAhead;
+    private void Awake()
+    {
+        noDestroy();    //추가 파괴되지 않음
+    }
 
     public void SetTarget(Transform newTarget)
     {
         target = newTarget;
         SnapToTarget();
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (instance != this) return;
+
+        foreach (GameObject root in scene.GetRootGameObjects())
+        {
+            foreach (Camera cam in root.GetComponentsInChildren<Camera>(true))
+            {
+                if (cam.gameObject != gameObject)
+                {
+                    Destroy(cam.gameObject);
+                }
+            }
+        }
     }
 
     private void LateUpdate()
@@ -71,6 +103,21 @@ public class CameraFollow2D : MonoBehaviour
             clamped.x = Mathf.Clamp(clamped.x, minBounds.x, maxBounds.x);
             clamped.y = Mathf.Clamp(clamped.y, minBounds.y, maxBounds.y);
             transform.position = clamped;
+        }
+    }
+
+    void noDestroy()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+            return;
+        }
+
+        if (instance != this)
+        {
+            Destroy(gameObject);
         }
     }
 }

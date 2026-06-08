@@ -212,13 +212,19 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        isDead = false;
-        Time.timeScale = 1f;
+        rb = GetComponent<Rigidbody2D>();
+        deadUI = FindObjectOfType<DeadUI>();
 
-        if (BatteryController.Instance != null)
+        isDead = false;
+
+        if (aniRun != null)
         {
-            BatteryController.Instance.ReviveAndResetBattery();
+            aniRun.ResetTrigger("isDead");
+            aniRun.SetBool("isDead", false);
+            aniRun.Play("Idle"); 
         }
+
+        StartCoroutine(MoveToSpawnPointRoutine());
     }
 
     void Dead()
@@ -234,13 +240,39 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator DelayedDead()
     {
-        yield return new WaitForSeconds(1f); // 1초 대기
+        yield return new WaitForSeconds(3f); // 2초 대기
         rb.velocity = Vector2.zero;
         rb.bodyType = RigidbodyType2D.Kinematic;
         deadUI.ShowDeadPanel();
         Time.timeScale = 0f;
     }
+    private IEnumerator MoveToSpawnPointRoutine()
+    {
+        if (rb != null)
+        {
+            rb.velocity = Vector2.zero;
+            rb.bodyType = RigidbodyType2D.Kinematic; 
+            rb.simulated = false;
+        }
 
+        yield return null;
+        GameObject spawnPoint = GameObject.FindWithTag("StartPoint");
+        
+        if (spawnPoint != null)
+        {
+            transform.position = spawnPoint.transform.position;
+            rb.position = spawnPoint.transform.position;
+        }
+
+        yield return null;
+
+        if (rb != null)
+        {
+            rb.bodyType = RigidbodyType2D.Dynamic;
+            rb.simulated = true;
+            rb.velocity = Vector2.zero;
+        }
+    }
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.TryGetComponent(out IPickupable pickupable))

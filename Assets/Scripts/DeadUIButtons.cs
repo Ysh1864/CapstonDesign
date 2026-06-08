@@ -10,6 +10,7 @@ public class DeadUIButtons : MonoBehaviour
 
     public void RetryButton()
     {
+        Debug.Log("재시작");
         Time.timeScale = 1f;
 
         if (BatteryController.Instance != null)

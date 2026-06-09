@@ -9,6 +9,9 @@ TagManager:
   - DeadUI
   - SpawnPoint
   - StartPoint
+  - EndPotal
+  - Key
+  - Canvas
   layers:
   - Default
   - TransparentFX

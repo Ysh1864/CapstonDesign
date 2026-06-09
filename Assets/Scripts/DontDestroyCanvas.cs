@@ -1,5 +1,7 @@
 using UnityEngine;
-
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 public class DontDestroyCanvas : MonoBehaviour
 {
     public static DontDestroyCanvas Instance { get; private set; }
@@ -15,5 +17,6 @@ public class DontDestroyCanvas : MonoBehaviour
         {
             Destroy(gameObject); 
         }
+        
     }
 }

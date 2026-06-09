@@ -3,22 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class DontDestroyPlayer : MonoBehaviour
+public class DestroyPanel : MonoBehaviour
 {
-    public static DontDestroyPlayer Instance { get; private set; }
-
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject); 
-        }
-        else
-        {
-            Destroy(gameObject); 
-        }
-    }
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -31,12 +17,7 @@ public class DontDestroyPlayer : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (scene.name == "EndScene")
-        {
-            if (Instance == this)
-            {
-                Instance = null;
-            }
-            
+        {    
             Destroy(gameObject);
         }
     }

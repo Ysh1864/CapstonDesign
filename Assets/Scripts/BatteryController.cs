@@ -23,6 +23,8 @@ public class BatteryController : MonoBehaviour
     private Coroutine drainRoutine;
 
     public float DrainBatteryAmount => drainBattery;
+    public float CurrentBattery => currentBattery;
+    public float MaxBattery => maxBattery;
 
     private void Awake()
     {

@@ -19,6 +19,7 @@ public class ClearUI : MonoBehaviour
     {
         if (scene.name == "EndScene")
         {   
+            Time.timeScale = 1f;
             StartCoroutine(ViewBackGrownd());   //배경 감상 후 클리어 UI
         }
         else

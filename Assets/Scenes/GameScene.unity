@@ -722,8 +722,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 633159841}
-        m_TargetAssemblyTypeName: DeadUIButtons, Assembly-CSharp
+      - m_Target: {fileID: 633159845}
+        m_TargetAssemblyTypeName: Clearbuttons, Assembly-CSharp
         m_MethodName: QuitButton
         m_Mode: 1
         m_Arguments:
@@ -10795,6 +10795,7 @@ GameObject:
   - component: {fileID: 633159842}
   - component: {fileID: 633159843}
   - component: {fileID: 633159844}
+  - component: {fileID: 633159845}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -10906,6 +10907,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   clearPanel: {fileID: 237542293}
+--- !u!114 &633159845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 633159837}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ae1b3a3450f73546946592c37c62c31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &654057759
 GameObject:
   m_ObjectHideFlags: 0
@@ -11155,8 +11168,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 633159841}
-        m_TargetAssemblyTypeName: DeadUIButtons, Assembly-CSharp
+      - m_Target: {fileID: 633159845}
+        m_TargetAssemblyTypeName: Clearbuttons, Assembly-CSharp
         m_MethodName: RetryButton
         m_Mode: 1
         m_Arguments:

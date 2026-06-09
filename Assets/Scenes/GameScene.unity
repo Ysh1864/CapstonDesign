@@ -10466,6 +10466,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &609618617
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 609618618}
+  m_Layer: 0
+  m_Name: StartPoint
+  m_TagString: StartPoint
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &609618618
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 609618617}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -24, y: -2.995, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &633159837
 GameObject:
   m_ObjectHideFlags: 0
@@ -10478,6 +10509,7 @@ GameObject:
   - component: {fileID: 633159838}
   - component: {fileID: 633159841}
   - component: {fileID: 633159840}
+  - component: {fileID: 633159842}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -10542,6 +10574,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneName: GameScene
+--- !u!114 &633159842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 633159837}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42d805735dc351f4d92d0e1c1746a35b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pm: {fileID: 1718649093}
+  player: {fileID: 1718649089}
+  startPoint: {x: -24, y: -2.995, z: 0}
+  am: {fileID: 1718649090}
+  isStartcut: 0
+  moveDuration: 3
 --- !u!1 &654057759
 GameObject:
   m_ObjectHideFlags: 0
@@ -12480,7 +12530,7 @@ Transform:
   m_GameObject: {fileID: 1718649089}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -13.72, y: -1.85, z: 0}
+  m_LocalPosition: {x: -14.63, y: -3.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -12502,6 +12552,9 @@ MonoBehaviour:
   stat: {fileID: 11400000, guid: 38d4c905bbd3ff54d817c01bbfd8ccd7, type: 2}
   groundCheck: {fileID: 877834589}
   aniRun: {fileID: 1718649090}
+  rb: {fileID: 0}
+  ps: {fileID: 633159842}
+  stopControll: 0
 --- !u!114 &1718649094
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12585,7 +12638,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1718649089}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 42d805735dc351f4d92d0e1c1746a35b, type: 3}
+  m_Script: {fileID: 11500000, guid: 0d70771dbc9f0c04da0238e2385bb2be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1830223889
@@ -13406,3 +13459,4 @@ SceneRoots:
   - {fileID: 633159839}
   - {fileID: 726523152}
   - {fileID: 234653224}
+  - {fileID: 609618618}

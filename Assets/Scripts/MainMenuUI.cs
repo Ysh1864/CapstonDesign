@@ -3,10 +3,10 @@ using UnityEngine.UI;
 
 public class MainMenuUI : MonoBehaviour
 {
-    [Header("ÀÌµ¿ÇÒ ¾À ÀÌ¸§ (Build Settings ¿¡ µî·ÏµÈ ÀÌ¸§)")]
+    [Header("ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ì¸ï¿½ (Build Settings ï¿½ï¿½ ï¿½ï¿½Ïµï¿½ ï¿½Ì¸ï¿½)")]
     [SerializeField] private string nextSceneName = "GameScene";
 
-    [Header("Start ¹öÆ°")]
+    [Header("Start ï¿½ï¿½Æ°")]
     [SerializeField] private Button startButton;
 
     private void Start()
@@ -23,9 +23,12 @@ public class MainMenuUI : MonoBehaviour
 
     private void OnStartClicked()
     {
+        PlayerPrefs.SetInt("PlayCutscene", 1);  //ì»·ì‹ ì„ ìœ„í•´ ì¶”ê°€
+        PlayerPrefs.Save(); //ì»·ì‹ ì„ ìœ„í•´ ì¶”ê°€
+
         if (SceneTransition.Instance != null)
             SceneTransition.Instance.LoadScene(nextSceneName);
         else
-            Debug.LogWarning("[MainMenuUI] SceneTransition ÀÎ½ºÅÏ½º¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("[MainMenuUI] SceneTransition ï¿½Î½ï¿½ï¿½Ï½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
     }
 }

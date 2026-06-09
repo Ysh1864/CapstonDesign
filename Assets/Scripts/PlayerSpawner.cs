@@ -1,10 +1,17 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class PlayerSpawner : MonoBehaviour
 {
     private static PlayerSpawner instance;
-    private Rigidbody2D rb;
+
+    public PlayerMovement pm;
+    public GameObject player;
+    public Vector3 startPoint;
+    public Animator am;
+    public bool isStartcut = false;
+    public float moveDuration = 3f;
 
     private void Awake()
     {
@@ -15,8 +22,8 @@ public class PlayerSpawner : MonoBehaviour
         }
 
         instance = this;
-        rb = GetComponent<Rigidbody2D>();
         DontDestroyOnLoad(gameObject);
+
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
@@ -25,28 +32,50 @@ public class PlayerSpawner : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
+    void Start()
+    {
+        CheckAndRunSpawnLogic();
+    }
+
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        MoveToSpawnPoint();
+        CheckAndRunSpawnLogic();
+    }
+
+    private void CheckAndRunSpawnLogic()
+    {
+        if (PlayerPrefs.GetInt("PlayCutscene", 0) == 1)
+        {
+            isStartcut = true;
+        }
+
+        if (isStartcut)
+        {
+            GameObject spawnPointObj = GameObject.FindGameObjectWithTag("StartPoint");
+            if (spawnPointObj != null)
+            {
+                startPoint = spawnPointObj.transform.position;
+            }
+            
+            StartCutScene();
+        }
+        else
+        {
+            MoveToSpawnPoint();
+        }
     }
 
     private void MoveToSpawnPoint()
     {
         string previousScene = PortalTransitionData.PreviousScene;
 
-        // √÷√  Ω√¿€¿Ã∏È ¿Ãµø«œ¡ˆ æ ¿Ω
         if (string.IsNullOrEmpty(previousScene)) return;
 
         SpawnPoint[] spawnPoints = FindObjectsOfType<SpawnPoint>();
-
-        if (spawnPoints.Length == 0)
-        {            
-            return;
-        }
+        if (spawnPoints.Length == 0) return;
 
         SpawnPoint target = null;
 
-        // 1º¯¿ß: fromScene ¿Ã previousScene ∞˙ ¿œƒ°
         foreach (SpawnPoint sp in spawnPoints)
         {
             if (sp.fromScene == previousScene)
@@ -56,7 +85,6 @@ public class PlayerSpawner : MonoBehaviour
             }
         }
 
-        // 2º¯¿ß: fromScene ¿Ã ∫ÒæÓ¿÷¥¬ ±‚∫ª SpawnPoint
         if (target == null)
         {
             foreach (SpawnPoint sp in spawnPoints)
@@ -71,18 +99,84 @@ public class PlayerSpawner : MonoBehaviour
 
         if (target != null)
         {
-            Vector2 spawnPos = target.transform.position;
+            Vector3 spawnPos = target.transform.position;
 
-            // transform ∞˙ Rigidbody2D µ— ¥Ÿ º≥¡§ (π∞∏Æ √Êµπ πÊ¡ˆ)
-            transform.position = spawnPos;
-            if (rb != null)
+            player.transform.position = spawnPos;
+
+            if (pm != null && pm.rb != null)
             {
-                rb.position = spawnPos;
-                rb.velocity = Vector2.zero;
+                pm.rb.position = spawnPos;
+                pm.rb.velocity = Vector2.zero;
             }
 
-            Debug.Log($"[PlayerSpawner] '{previousScene}' °Ê '{target.name}' ({spawnPos})");
+            Debug.Log($"[PlayerSpawner] Ìè¨ÌÉà Ïù¥Îèô ÏïàÏ∞© ÏôÑÎ£å: '{previousScene}' -> '{target.name}' ({spawnPos})");
         }
-        
+    }
+
+    public void StartCutScene()
+    {
+        StartCoroutine(CutSceneRoutine());
+    }
+
+    private IEnumerator CutSceneRoutine()
+    {
+        pm.stopControll = true;
+
+        if (pm.rb != null)
+        {
+            pm.rb.simulated = false;
+            pm.rb.velocity = Vector2.zero;
+            pm.rb.bodyType = RigidbodyType2D.Kinematic;
+            pm.rb.position = startPoint;
+        }
+        player.transform.position = startPoint;
+
+        yield return null;
+        yield return new WaitForEndOfFrame();
+
+        Vector3 endPos = new Vector3(-13f, player.transform.position.y, player.transform.position.z);
+        float elapsed = 0f;
+
+        while (elapsed < moveDuration)
+        {
+            am.SetBool("isRunning", true);
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / moveDuration);
+            
+            Vector3 currentTargetPos = Vector3.Lerp(startPoint, endPos, t);
+            
+            if (pm.rb != null)
+            {
+                pm.rb.position = currentTargetPos;
+            }
+            player.transform.position = currentTargetPos;
+            
+            yield return null;
+        }
+
+        if (pm.rb != null)
+        {
+            pm.rb.position = endPos;
+        }
+        player.transform.position = endPos;
+
+        StartCutSceneEnd();
+    }
+
+    public void StartCutSceneEnd()
+    {
+        if (pm.rb != null)
+        {
+            pm.rb.bodyType = RigidbodyType2D.Dynamic;
+            pm.rb.simulated = true;
+            pm.rb.velocity = Vector2.zero;
+        }
+
+        am.SetBool("isRunning", false);
+        pm.stopControll = false;
+        isStartcut = false;
+
+        PlayerPrefs.SetInt("PlayCutscene", 0);
+        PlayerPrefs.Save();
     }
 }

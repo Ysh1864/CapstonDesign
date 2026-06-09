@@ -10,8 +10,10 @@ public class DeadUIButtons : MonoBehaviour
 
     public void RetryButton()
     {
-        Debug.Log("재시작");
         Time.timeScale = 1f;
+
+        PlayerPrefs.SetInt("PlayCutscene", 1);
+        PlayerPrefs.Save(); 
 
         if (BatteryController.Instance != null)
         {

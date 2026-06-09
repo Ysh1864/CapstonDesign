@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private Animator aniRun;
 
-    private Rigidbody2D rb;
+    public Rigidbody2D rb;
     private PlayerInventory inventory;
     private bool isGrounded;
     public int FacingDirection { get; private set; } = 1;
@@ -28,6 +28,9 @@ public class PlayerMovement : MonoBehaviour
 
     private Portal nearbyPortal;
     private DeadUI deadUI;
+
+    public PlayerSpawner ps;
+    public bool stopControll = false;   //조작불가 상태
 
     public event System.Action OnToolUsed;
 
@@ -102,6 +105,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleHorizontalMovement()
     {
+        if(stopControll)
+        return;
+
         float input = Input.GetAxisRaw("Horizontal");
         float targetVelX = input * stat.moveSpeed;
 
@@ -115,6 +121,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void UpdateFacing()
     {
+        if(stopControll)
+        return;
+
         float input = Input.GetAxisRaw("Horizontal");
         if (input > 0.01f) { FacingDirection = 1; transform.localScale = new Vector3(1f, 1f, 1f); }
         else if (input < -0.01f) { FacingDirection = -1; transform.localScale = new Vector3(-1f, 1f, 1f); }
@@ -131,6 +140,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleJumpInput()
     {
+        if(stopControll)
+        return;
+
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             if (nearbyPortal != null && nearbyPortal.IsUnlocked && isGrounded)
@@ -223,8 +235,6 @@ public class PlayerMovement : MonoBehaviour
             aniRun.SetBool("isDead", false);
             aniRun.Play("Idle"); 
         }
-
-        StartCoroutine(MoveToSpawnPointRoutine());
     }
 
     void Dead()
@@ -232,11 +242,14 @@ public class PlayerMovement : MonoBehaviour
         if (isDead) return;
 
         isDead = true;
+        ps.isStartcut = true;
+
         aniRun.SetBool("isDead", true);
         Debug.Log("[PlayerMovement] 플레이어가 배터리 방전으로 사망했습니다.");
 
         StartCoroutine(DelayedDead());
     }
+    
 
     private IEnumerator DelayedDead()
     {
@@ -246,34 +259,8 @@ public class PlayerMovement : MonoBehaviour
         deadUI.ShowDeadPanel();
         Time.timeScale = 0f;
     }
-    private IEnumerator MoveToSpawnPointRoutine()
-    {
-        if (rb != null)
-        {
-            rb.velocity = Vector2.zero;
-            rb.bodyType = RigidbodyType2D.Kinematic; 
-            rb.simulated = false;
-        }
 
-        yield return null;
-        GameObject spawnPoint = GameObject.FindWithTag("StartPoint");
-        
-        if (spawnPoint != null)
-        {
-            transform.position = spawnPoint.transform.position;
-            rb.position = spawnPoint.transform.position;
-        }
-
-        yield return null;
-
-        if (rb != null)
-        {
-            rb.bodyType = RigidbodyType2D.Dynamic;
-            rb.simulated = true;
-            rb.velocity = Vector2.zero;
-        }
-    }
-    private void OnTriggerEnter2D(Collider2D other)
+        private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.TryGetComponent(out IPickupable pickupable))
             nearbyPickupable = pickupable;

@@ -32,16 +32,12 @@ public class EndPotalTrigger : MonoBehaviour
         if(isKey)
         {
             //포탈과 상호작용 가능.
-            Debug.Log("[EndPotalTrigger] 열쇠 확인 완료! 탈출 포탈 작동합니다.");
-
-            StartCoroutine(EndScene());
+             EndScene();
         }
     }
-    IEnumerator EndScene()
+    public void EndScene()
     {
-        //포탈 해금 연출
-        pm.stopControll = true;
-        yield return new WaitForSeconds(3f);
+        //pm.stopControll = true;
         
         //페이드 아웃 연출
         if (SceneTransition.Instance != null)

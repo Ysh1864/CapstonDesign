@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenuScene.unity
     guid: 393bc261d364ec147b50c8aad3750cba
   - enabled: 1
+    path: Assets/Scenes/StartScene.unity
+    guid: 0315cf1f2d495c74dbd7c1b437eac99e
+  - enabled: 1
     path: Assets/Scenes/GameScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
@@ -17,6 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Map2.unity
     guid: 8f669695568f3de4abf578d8eccce2f7
+  - enabled: 1
+    path: Assets/Scenes/EndArea.unity
+    guid: 10f64099f1c4ca9409628ce72ab58af2
   - enabled: 1
     path: Assets/Scenes/EndScene.unity
     guid: ecdbb0055ed66984fa1939fd69327eee

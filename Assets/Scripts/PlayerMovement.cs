@@ -277,9 +277,7 @@ public class PlayerMovement : MonoBehaviour
     {
         //탈출포탈과 상호작용
         if(other.CompareTag("EndPotal")&&Input.GetKeyDown(KeyCode.F))
-        {
             ept.OpenEndPotal();
-        }
     }
 
     private void OnTriggerExit2D(Collider2D other)

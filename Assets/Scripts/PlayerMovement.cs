@@ -67,6 +67,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (nearbyPortal != null)
             nearbyPortal.SetPlayerGrounded(isGrounded);
+
     }
 
     private void FixedUpdate()

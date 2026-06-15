@@ -91,6 +91,8 @@ public class SceneTransition : MonoBehaviour
 
     private IEnumerator FadeIn()
     {
+        Debug.Log("페이드인 시작");
+
         SetAlpha(1f);
         fadePanel.gameObject.SetActive(true);
         float elapsed = 0f;
@@ -103,6 +105,8 @@ public class SceneTransition : MonoBehaviour
         SetAlpha(0f);
         fadePanel.gameObject.SetActive(false);
         isFading = false;
+
+        Debug.Log("페이드인 끝");
     }
 
     private void SetAlpha(float alpha)

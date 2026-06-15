@@ -31,18 +31,20 @@ public class MainMenuUI : MonoBehaviour
         if (SceneTransition.Instance != null)
             SceneTransition.Instance.LoadScene(nextSceneName);
         else
+            UnityEngine.SceneManagement.SceneManager.LoadScene(nextSceneName);
             Debug.LogWarning("[MainMenuUI] SceneTransition �ν��Ͻ��� ã�� �� �����ϴ�.");
     }
 
     public void ButtonStart()
     {
-        SceneManager.LoadScene("StartScene");
-        Debug.Log("시작");
+        if (SceneTransition.Instance != null)
+            SceneTransition.Instance.LoadScene(nextSceneName);
+        else
+            UnityEngine.SceneManagement.SceneManager.LoadScene(nextSceneName);
     }
 
     public void ButtonQuit()
     {
         Application.Quit();
-        Debug.Log("종료0");
     }
 }

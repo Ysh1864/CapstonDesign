@@ -9,7 +9,7 @@ public class EndPotalTrigger : MonoBehaviour
     public bool isKey = false;
 
     [Header("탈출 성공 시 이동할 씬 이름")]
-    [SerializeField] private string targetSceneName = "MainMenu";
+    [SerializeField] private string nextSceneName = "Map3";
 
     public PlayerMovement pm;
     public GameObject KeySprite;
@@ -21,6 +21,9 @@ public class EndPotalTrigger : MonoBehaviour
     
     public void HaveKey()
     {
+        if(!isKey || KeySprite == null)
+            return;
+
         if(isKey)
             KeySprite.SetActive(true);
         else
@@ -41,9 +44,9 @@ public class EndPotalTrigger : MonoBehaviour
         
         //페이드 아웃 연출
         if (SceneTransition.Instance != null)
-            SceneTransition.Instance.LoadScene(targetSceneName);
+            SceneTransition.Instance.LoadScene(nextSceneName);
         else
-            UnityEngine.SceneManagement.SceneManager.LoadScene(targetSceneName);
+            UnityEngine.SceneManagement.SceneManager.LoadScene(nextSceneName);
     }
 
 }

@@ -10248,7 +10248,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isKey: 0
-  targetSceneName: EndArea
+  targetSceneName: Map3
   pm: {fileID: 1718649093}
   KeySprite: {fileID: 1316260461}
 --- !u!114 &633159845

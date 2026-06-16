@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class QuestUI : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class QuestUI : MonoBehaviour
     private Image keyIconImage;
     private Text keyCountText;
     private Coroutine keyEffectRoutine;
+    [SerializeField] private string endSceneName = "EndScene";
 
     private readonly Color slotEmptyColor = new Color(1f, 1f, 1f, 0.92f);
     private readonly Color iconHiddenColor = new Color(1f, 1f, 1f, 0f);
@@ -32,9 +34,37 @@ public class QuestUI : MonoBehaviour
         BuildUI();
     }
 
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
     private void Start()
     {
         HideSign();
+        UpdateKeySlotVisibility(SceneManager.GetActiveScene().name);
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        UpdateKeySlotVisibility(scene.name);
+    }
+
+    private void UpdateKeySlotVisibility(string sceneName)
+    {
+        BuildUI();
+
+        bool isEndScene = sceneName == endSceneName;
+
+        if (keySlotImage != null)
+        {
+            keySlotImage.gameObject.SetActive(!isEndScene);
+        }
     }
 
     public void ShowSign(string message)

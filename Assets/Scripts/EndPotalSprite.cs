@@ -16,9 +16,11 @@ public class EndPotalSprite : MonoBehaviour
     }
 
     public void ActivatePotal()
-    {/*
-        if (FindObjectOfType<EndPotalTrigger>().isKey)
-            animator.SetBool("isKey", true);
-            */
+    {
+        if(KeyFragmentManager.Instance.CollectedCount != 2)
+            return;
+
+        if(KeyFragmentManager.Instance.CollectedCount == 2)
+            animator.SetBool("isKeyAll", true);
     }
 }

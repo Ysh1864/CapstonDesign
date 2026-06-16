@@ -10312,9 +10312,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isKey: 0
-  targetSceneName: Map3
+  nextSceneName: Map3
   pm: {fileID: 1718649093}
-  KeySprite: {fileID: 1316260461}
 --- !u!114 &633159845
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12151,7 +12150,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1256437843
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13277,9 +13276,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c24f6fa1a83d4298931e2a3d664ba99c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  message: "\uC870\uC791 \uBC29\uBC95 \n\u2190 \u2192 : \uC774\uB3D9 \n\u2191 : \uC810\uD504
-    \nF  : \uC0C1\uD638\uC791\uC6A9\n\n\uAC01 \uB9F5\uC758 \uC5F4\uC1E0 \uC870\uAC01
-    2\uAC1C\uB97C \uBAA8\uC544 \uBCF4\uBB3C\uACE0 \uBB38\uC744 \uC5EC\uC138\uC694!"
+  message: "\uC870\uC791 \uBC29\uBC95 \nA D : \uC774\uB3D9 \nW : \uC810\uD504 \nF 
+    : \uC0C1\uD638\uC791\uC6A9\n\n\uAC01 \uB9F5\uC758 \uC5F4\uC1E0 \uC870\uAC01 2\uAC1C\uB97C
+    \uBAA8\uC544 \uBCF4\uBB3C\uACE0 \uBB38\uC744 \uC5EC\uC138\uC694!"
 --- !u!1001 &7987577797781118509
 PrefabInstance:
   m_ObjectHideFlags: 0

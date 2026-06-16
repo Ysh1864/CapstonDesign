@@ -6,14 +6,18 @@ using UnityEngine.SceneManagement;
 
 public class EndPotalTrigger : MonoBehaviour
 {
-    public bool isKey = false;
+    public bool isKey =false;
 
     [Header("탈출 성공 시 이동할 씬 이름")]
     [SerializeField] private string nextSceneName = "Map3";
 
     public PlayerMovement pm;
-    public GameObject KeySprite;
+    //public GameObject KeySprite;
 
+    void Start()
+    {
+        isKey = KeyFragmentManager.Instance.HasAllFragments;
+    }
     void Update()
     {
         HaveKey();
@@ -21,32 +25,38 @@ public class EndPotalTrigger : MonoBehaviour
     
     public void HaveKey()
     {
-        if(!isKey || KeySprite == null)
+       if(KeyFragmentManager.Instance.CollectedCount != 2)
             return;
 
-        if(isKey)
-            KeySprite.SetActive(true);
-        else
-            KeySprite.SetActive(false);
+        if(KeyFragmentManager.Instance.CollectedCount == 2)
+            isKey = true;
     }
 
     public void OpenEndPotal()
     {
-        if(isKey)
-        {
-            //포탈과 상호작용 가능.
-             EndScene();
-        }
+        EndScene();
     }
     public void EndScene()
     {
-        //pm.stopControll = true;
-        
-        //페이드 아웃 연출
-        if (SceneTransition.Instance != null)
-            SceneTransition.Instance.LoadScene(nextSceneName);
+        pm.stopControll = true;
+        StartCoroutine(Stay());
+    }
+
+    IEnumerator Stay()
+    {
+        if(isKey)
+        {
+           yield return new WaitForSeconds(1f);
+            
+            pm.stopControll = false;
+
+            if (SceneTransition.Instance != null)
+                SceneTransition.Instance.LoadScene(nextSceneName);
+            else
+                UnityEngine.SceneManagement.SceneManager.LoadScene(nextSceneName);
+        }
         else
-            UnityEngine.SceneManagement.SceneManager.LoadScene(nextSceneName);
+            pm.stopControll = false;
     }
 
 }

@@ -142,10 +142,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleJumpInput()
     {
-        if(stopControll)
-        return;
-
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
             if (nearbyPortal != null && nearbyPortal.IsUnlocked && isGrounded)
                 return;
@@ -155,7 +152,7 @@ public class PlayerMovement : MonoBehaviour
         if (jumpBufferTimer > 0f && coyoteTimer > 0f)
             ExecuteJump();
 
-        if (Input.GetKeyUp(KeyCode.UpArrow) && isJumping)
+        if ((Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.W)) && isJumping)
         {
             isJumping = false;
             jumpHoldTimer = 0f;
@@ -176,7 +173,7 @@ public class PlayerMovement : MonoBehaviour
     private void ApplyGravity()
     {
         float scale;
-        if (isJumping && Input.GetKey(KeyCode.UpArrow) && jumpHoldTimer > 0f)
+        if (isJumping && (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) && jumpHoldTimer > 0f)
             scale = stat.gravityScale * stat.jumpHoldGravityScale;
         else if (rb.velocity.y < 0f)
             scale = stat.fallGravityScale;
@@ -277,7 +274,7 @@ public class PlayerMovement : MonoBehaviour
     private void OnTriggerStay2D(Collider2D other)
     {
         //탈출포탈과 상호작용
-        if(other.CompareTag("EndPotal")&&Input.GetKeyDown(KeyCode.F))
+        if(other.CompareTag("EndPotal")&&Input.GetKeyDown(KeyCode.UpArrow))
             ept.OpenEndPotal();
     }
 

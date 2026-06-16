@@ -14,6 +14,8 @@ public class EndPotalTrigger : MonoBehaviour
     public PlayerMovement pm;
     //public GameObject KeySprite;
 
+    public GameObject SpriteOpen;
+
     void Start()
     {
         isKey = KeyFragmentManager.Instance.HasAllFragments;

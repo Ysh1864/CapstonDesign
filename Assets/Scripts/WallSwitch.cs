@@ -4,13 +4,16 @@ using UnityEngine.Tilemaps;
 
 public class WallSwitch : MonoBehaviour
 {
-    [Header("¿¬°á ¼³Á¤")]
+    [Header("ì—°ê²° ì„¤ì •")]
     public Tilemap hiddenPlatformTilemap;
 
-    [Header("°íÀ¯ ID (¾À ³»¿¡¼­ °ãÄ¡Áö ¾Ê°Ô ¼³Á¤)")]
+    [Header("ê³ ìœ  ID (ì”¬ ë‚´ì—ì„œ ê²¹ì¹˜ì§€ ì•Šê²Œ ì„¤ì •)")]
     public string switchID = "switch_01";
 
-    [Header("ºñÁÖ¾ó (¼±ÅÃ)")]
+    [Header("ì¹´ë©”ë¼ ì»·ì‹ ")]
+    public Transform cameraFocusPoint;
+
+    [Header("ë¹„ì£¼ì–¼ (ì„ íƒ)")]
     public SpriteRenderer switchRenderer;
     public Sprite offSprite;
     public Sprite onSprite;
@@ -23,7 +26,7 @@ public class WallSwitch : MonoBehaviour
     {
         sceneKey = SceneManager.GetActiveScene().name + "_" + switchID;
 
-        // ÀÌÀü¿¡ È°¼ºÈ­µÈ Àû ÀÖÀ¸¸é º¹¿ø
+        // ì´ì „ì— í™œì„±í™”ëœ ì  ìˆìœ¼ë©´ ë³µì›
         if (FunctionalData.IsActivated(sceneKey))
         {
             isActivated = true;
@@ -55,8 +58,14 @@ public class WallSwitch : MonoBehaviour
         if (hiddenPlatformTilemap != null)
             hiddenPlatformTilemap.gameObject.SetActive(true);
 
+        if (CameraCutsceneController.Instance != null &&
+            cameraFocusPoint != null)
+        {
+            CameraCutsceneController.Instance.PlayCutscene(cameraFocusPoint);
+        }
+
         UpdateVisual();
-        Debug.Log($"[WallSwitch] È°¼ºÈ­ ¡æ ¹ßÆÇ »ı¼º ({sceneKey})");
+        Debug.Log($"[WallSwitch] í™œì„±í™” â†’ ë°œíŒ ìƒì„± ({sceneKey})");
     }
 
     private void UpdateVisual()

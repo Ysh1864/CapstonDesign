@@ -12003,6 +12003,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1359895828
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1359895829}
+  m_Layer: 0
+  m_Name: CameraFocus_Wall
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1359895829
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1359895828}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -10.06, y: 5.08, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1461512729
 GameObject:
   m_ObjectHideFlags: 0
@@ -12199,6 +12230,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hiddenPlatformTilemap: {fileID: 1628003341}
   switchID: switch_01
+  cameraFocusPoint: {fileID: 2082505708}
   switchRenderer: {fileID: 0}
   offSprite: {fileID: 0}
   onSprite: {fileID: 0}
@@ -13038,6 +13070,7 @@ MonoBehaviour:
   offSprite: {fileID: 0}
   onSprite: {fileID: 0}
   leverAnimator: {fileID: 1795422453}
+  cameraFocusPoint: {fileID: 1359895829}
   pullTriggerName: Pull
   animationDelay: 2
 --- !u!95 &1795422453
@@ -14405,6 +14438,37 @@ Transform:
   - {fileID: 58157883}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2082505707
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2082505708}
+  m_Layer: 0
+  m_Name: CameraFocus_Foothold
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2082505708
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2082505707}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 12.9, y: 1.76, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2131160816
 GameObject:
   m_ObjectHideFlags: 0
@@ -14610,3 +14674,5 @@ SceneRoots:
   - {fileID: 1468563587}
   - {fileID: 1795422450}
   - {fileID: 7600000201}
+  - {fileID: 2082505708}
+  - {fileID: 1359895829}

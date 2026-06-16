@@ -10688,6 +10688,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hiddenPlatformTilemap: {fileID: 473151243}
   switchID: switch_02
+  cameraFocusPoint: {fileID: 943643817}
   switchRenderer: {fileID: 0}
   offSprite: {fileID: 0}
   onSprite: {fileID: 0}
@@ -13434,6 +13435,37 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!1 &943643816
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 943643817}
+  m_Layer: 0
+  m_Name: CameraFocus_Switch
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &943643817
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 943643816}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 12.36, y: -0.5, z: -0.009202534}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &959676054
 GameObject:
   m_ObjectHideFlags: 0
@@ -14580,7 +14612,7 @@ Transform:
   m_GameObject: {fileID: 7600000300}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -22.33, y: -8.76, z: 0}
+  m_LocalPosition: {x: -17.78, y: -8.65, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14723,3 +14755,4 @@ SceneRoots:
   - {fileID: 1825897199}
   - {fileID: 577790740}
   - {fileID: 7600000301}
+  - {fileID: 943643817}

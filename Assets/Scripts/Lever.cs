@@ -11,28 +11,30 @@ public class Lever : MonoBehaviour
         FadeOut
     }
 
-    [Header("¿¬°á ¼³Á¤")]
+    [Header("ì—°ê²° ì„¤ì •")]
     public Tilemap wallTilemap;
 
-    [Header("°íÀ¯ ID (¾À ³»¿¡¼­ °ãÄ¡Áö ¾Ê°Ô ¼³Á¤)")]
+    [Header("ê³ ìœ  ID (ì”¬ ë‚´ì—ì„œ ê²¹ì¹˜ì§€ ì•Šê²Œ ì„¤ì •)")]
     public string leverID = "lever_01";
 
-    [Header("Á¦°Å ¹æ½Ä")]
+    [Header("ì œê±° ë°©ì‹")]
     public WallRemoveMode removeMode = WallRemoveMode.FadeOut;
 
-    [Header("ÆäÀÌµå ¼³Á¤ (FadeOut ¸ğµå)")]
+    [Header("í˜ì´ë“œ ì„¤ì • (FadeOut ëª¨ë“œ)")]
     public float fadeDuration = 1.0f;
 
-    [Header("ºñÁÖ¾ó (¼±ÅÃ)")]
+    [Header("ë¹„ì£¼ì–¼ (ì„ íƒ)")]
     public SpriteRenderer leverRenderer;
     public Sprite offSprite;
     public Sprite onSprite;
 
-    [Header("¾Ö´Ï¸ŞÀÌ¼Ç")]
+    [Header("ì• ë‹ˆë©”ì´ì…˜")]
     public Animator leverAnimator;
-    [Tooltip("AnimatorÀÇ Trigger ÆÄ¶ó¹ÌÅÍ ÀÌ¸§")]
+    [Header("ì¹´ë©”ë¼ ì»·ì‹ ")]
+    public Transform cameraFocusPoint;
+    [Tooltip("Animatorì˜ Trigger íŒŒë¼ë¯¸í„° ì´ë¦„")]
     public string pullTriggerName = "Pull";
-    [Tooltip("¾Ö´Ï¸ŞÀÌ¼Ç Àç»ı ÈÄ º® Á¦°Å±îÁö ´ë±â ½Ã°£(ÃÊ). 0ÀÌ¸é Áï½Ã ½ÇÇà")]
+    [Tooltip("ì• ë‹ˆë©”ì´ì…˜ ì¬ìƒ í›„ ë²½ ì œê±°ê¹Œì§€ ëŒ€ê¸° ì‹œê°„(ì´ˆ). 0ì´ë©´ ì¦‰ì‹œ ì‹¤í–‰")]
     public float animationDelay = 0f;
 
     private bool isActivated = false;
@@ -43,16 +45,16 @@ public class Lever : MonoBehaviour
     {
         sceneKey = SceneManager.GetActiveScene().name + "_" + leverID;
 
-        // ÀÌÀü¿¡ È°¼ºÈ­µÈ Àû ÀÖÀ¸¸é º¹¿ø
+        // ì´ì „ì— í™œì„±í™”ëœ ì  ìˆìœ¼ë©´ ë³µì›
         if (FunctionalData.IsActivated(sceneKey))
         {
             isActivated = true;
             if (wallTilemap != null)
                 wallTilemap.gameObject.SetActive(false);
 
-            // ¾Ö´Ï¸ŞÀÌ¼Çµµ ´ç°ÜÁø »óÅÂ·Î Áï½Ã ÀüÈ¯ (Æ®·£Áö¼Ç ¾øÀÌ)
+            // ì• ë‹ˆë©”ì´ì…˜ë„ ë‹¹ê²¨ì§„ ìƒíƒœë¡œ ì¦‰ì‹œ ì „í™˜ (íŠ¸ëœì§€ì…˜ ì—†ì´)
             if (leverAnimator != null)
-                leverAnimator.Play("Pulled", 0, 1f); // "Pulled" ½ºÅ×ÀÌÆ® ÀÌ¸§Àº ½ÇÁ¦ State ÀÌ¸§°ú ¸ÂÃçÁÖ¼¼¿ä
+                leverAnimator.Play("Pulled", 0, 1f); // "Pulled" ìŠ¤í…Œì´íŠ¸ ì´ë¦„ì€ ì‹¤ì œ State ì´ë¦„ê³¼ ë§ì¶°ì£¼ì„¸ìš”
         }
 
         UpdateVisual();
@@ -72,24 +74,30 @@ public class Lever : MonoBehaviour
         FunctionalData.SetActivated(sceneKey, true);
         UpdateVisual();
 
-        // ·¹¹ö ´ç±â±â ¾Ö´Ï¸ŞÀÌ¼Ç Àç»ı
+        // ë ˆë²„ ë‹¹ê¸°ê¸° ì• ë‹ˆë©”ì´ì…˜ ì¬ìƒ
         if (leverAnimator != null && !string.IsNullOrEmpty(pullTriggerName))
         {
             leverAnimator.SetTrigger(pullTriggerName);
-            Debug.Log($"[Lever] SetTrigger È£Ãâ: {pullTriggerName}, Animator: {leverAnimator.name}");
+            Debug.Log($"[Lever] SetTrigger í˜¸ì¶œ: {pullTriggerName}, Animator: {leverAnimator.name}");
         }
         else
         {
-            Debug.LogWarning("[Lever] leverAnimator ¶Ç´Â pullTriggerNameÀÌ ºñ¾îÀÖÀ½!");
+            Debug.LogWarning("[Lever] leverAnimator ë˜ëŠ” pullTriggerNameì´ ë¹„ì–´ìˆìŒ!");
         }
 
         if (wallTilemap == null)
         {
-            Debug.LogWarning("[Lever] wallTilemapÀÌ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            Debug.LogWarning("[Lever] wallTilemapì´ ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
             return;
         }
 
         StartCoroutine(ActivateWallAfterDelay());
+
+        if (CameraCutsceneController.Instance != null &&
+            cameraFocusPoint != null)
+        {
+            CameraCutsceneController.Instance.PlayCutscene(cameraFocusPoint);
+        }
     }
 
     private IEnumerator ActivateWallAfterDelay()
@@ -100,12 +108,12 @@ public class Lever : MonoBehaviour
         if (removeMode == WallRemoveMode.Disable)
         {
             wallTilemap.gameObject.SetActive(false);
-            Debug.Log($"[Lever] º® ºñÈ°¼ºÈ­ ({sceneKey})");
+            Debug.Log($"[Lever] ë²½ ë¹„í™œì„±í™” ({sceneKey})");
         }
         else
         {
             yield return StartCoroutine(FadeOutTilemap());
-            Debug.Log($"[Lever] º® ÆäÀÌµå¾Æ¿ô ½ÃÀÛ ({sceneKey})");
+            Debug.Log($"[Lever] ë²½ í˜ì´ë“œì•„ì›ƒ ì‹œì‘ ({sceneKey})");
         }
     }
 
@@ -142,7 +150,7 @@ public class Lever : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log($"[Lever] Æ®¸®°Å °¨Áö: {other.name}");
+        Debug.Log($"[Lever] íŠ¸ë¦¬ê±° ê°ì§€: {other.name}");
         if (other.CompareTag("Player"))
             playerInRange = true;
     }

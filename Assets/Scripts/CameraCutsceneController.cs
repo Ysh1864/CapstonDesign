@@ -17,12 +17,31 @@ public class CameraCutsceneController : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+            return;
+        }
+
         Instance = this;
         cameraFollow = GetComponent<CameraFollow2D>();
     }
 
+    private void OnEnable()
+    {
+        Instance = this;
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
+
     public void PlayCutscene(Transform focusPoint)
     {
+        Debug.Log($"PlayCutscene í˜¸ì¶œ / Focus = {focusPoint.name} / isPlaying = {isPlaying}");
+
         if (isPlaying) return;
         if (focusPoint == null) return;
 
@@ -31,9 +50,11 @@ public class CameraCutsceneController : MonoBehaviour
 
     private IEnumerator CutsceneRoutine(Transform focusPoint)
     {
+        Debug.Log("ì»·ì‹  ì‹œì‘");
+
         isPlaying = true;
 
-        // ±âÁ¸ Ä«¸Ş¶ó µû¶ó°¡±â Àá½Ã ²ô±â
+        // ê¸°ì¡´ ì¹´ë©”ë¼ ë”°ë¼ê°€ê¸° ì ì‹œ ë„ê¸°
         if (cameraFollow != null)
             cameraFollow.enabled = false;
 
@@ -45,7 +66,7 @@ public class CameraCutsceneController : MonoBehaviour
             transform.position.z
         );
 
-        // Ä«¸Ş¶ó°¡ ±â¹Í À§Ä¡·Î ÀÌµ¿
+        // ì¹´ë©”ë¼ê°€ ê¸°ë¯¹ ìœ„ì¹˜ë¡œ ì´ë™
         float time = 0f;
         while (time < moveDuration)
         {
@@ -58,10 +79,10 @@ public class CameraCutsceneController : MonoBehaviour
 
         transform.position = focusPos;
 
-        // ±â¹Í À§Ä¡ º¸¿©ÁÖ±â
+        // ê¸°ë¯¹ ìœ„ì¹˜ ë³´ì—¬ì£¼ê¸°
         yield return new WaitForSeconds(stayTime);
 
-        // ÇÃ·¹ÀÌ¾î À§Ä¡·Î µ¹¾Æ°¡±â
+        // í”Œë ˆì´ì–´ ìœ„ì¹˜ë¡œ ëŒì•„ê°€ê¸°
         Vector3 returnStartPos = transform.position;
 
         Vector3 playerPos = transform.position;
@@ -85,7 +106,7 @@ public class CameraCutsceneController : MonoBehaviour
             yield return null;
         }
 
-        // ±âÁ¸ Ä«¸Ş¶ó µû¶ó°¡±â ´Ù½Ã ÄÑ±â
+        // ê¸°ì¡´ ì¹´ë©”ë¼ ë”°ë¼ê°€ê¸° ë‹¤ì‹œ ì¼œê¸°
         if (cameraFollow != null)
             cameraFollow.enabled = true;
 

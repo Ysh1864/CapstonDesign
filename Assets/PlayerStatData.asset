@@ -15,7 +15,7 @@ MonoBehaviour:
   moveSpeed: 5
   acceleration: 20
   deceleration: 25
-  jumpForce: 12
+  jumpForce: 13
   jumpHoldGravityScale: 0.5
   jumpHoldDuration: 0.2
   gravityScale: 3

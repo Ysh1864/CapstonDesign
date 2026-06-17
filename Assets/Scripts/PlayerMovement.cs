@@ -28,6 +28,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Portal nearbyPortal;
     private DeadUI deadUI;
+    public Animator AniRun => aniRun;
 
     public PlayerSpawner ps;
     public EndPotalTrigger ept;

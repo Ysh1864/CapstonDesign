@@ -38,7 +38,13 @@ public class PlayerSpawner : MonoBehaviour
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
+    { 
+        if (pm == null)
+            pm = FindObjectOfType<PlayerMovement>();
+        if (am == null && pm != null)
+            am = pm.GetComponent<Animator>();
+
+
         CheckAndRunSpawnLogic();
     }
 
@@ -108,8 +114,6 @@ public class PlayerSpawner : MonoBehaviour
                 pm.rb.position = spawnPos;
                 pm.rb.velocity = Vector2.zero;
             }
-
-            Debug.Log($"[PlayerSpawner] 포탈 이동 안착 완료: '{previousScene}' -> '{target.name}' ({spawnPos})");
         }
     }
 

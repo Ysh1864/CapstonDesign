@@ -482,9 +482,10 @@ GameObject:
   - component: {fileID: 529358265}
   - component: {fileID: 529358267}
   - component: {fileID: 529358266}
+  - component: {fileID: 529358268}
   m_Layer: 0
   m_Name: Tilemap_Hazard
-  m_TagString: Untagged
+  m_TagString: Hazard
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -859,6 +860,42 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!19719996 &529358268
+TilemapCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 529358264}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_MaximumTileChangeCount: 1000
+  m_ExtrusionFactor: 0
+  m_UseDelaunayMesh: 0
 --- !u!1 &571470728
 GameObject:
   m_ObjectHideFlags: 0
@@ -10359,9 +10396,6 @@ MonoBehaviour:
   hiddenPlatformTilemap: {fileID: 473151243}
   switchID: switch_02
   cameraFocusPoint: {fileID: 943643817}
-  switchRenderer: {fileID: 0}
-  offSprite: {fileID: 0}
-  onSprite: {fileID: 0}
 --- !u!212 &577790739
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -13196,7 +13230,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 756351493, guid: 6236717d5dbc4e344b221af735e2fdfe, type: 3}
-  m_Color: {r: 0.13652545, g: 0.20906524, b: 0.49056602, a: 1}
+  m_Color: {r: 0.5647059, g: 0.5921569, b: 0.7019608, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -13521,7 +13555,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 756351493, guid: 6236717d5dbc4e344b221af735e2fdfe, type: 3}
-  m_Color: {r: 0.13652545, g: 0.20906524, b: 0.49056602, a: 1}
+  m_Color: {r: 0.56310076, g: 0.59010327, b: 0.6981132, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

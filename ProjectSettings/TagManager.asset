@@ -12,6 +12,7 @@ TagManager:
   - EndPotal
   - Key
   - Canvas
+  - Hazard
   layers:
   - Default
   - TransparentFX

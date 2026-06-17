@@ -44,13 +44,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnEnable()
     {
-        BatteryController.OnBatteryEmpty += Dead;
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDisable()
     {
-        BatteryController.OnBatteryEmpty -= Dead;
+
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
@@ -142,7 +141,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleJumpInput()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space))
         {
             if (nearbyPortal != null && nearbyPortal.IsUnlocked && isGrounded)
                 return;
@@ -152,7 +151,7 @@ public class PlayerMovement : MonoBehaviour
         if (jumpBufferTimer > 0f && coyoteTimer > 0f)
             ExecuteJump();
 
-        if ((Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.W)) && isJumping)
+        if ((Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.Space)) && isJumping)
         {
             isJumping = false;
             jumpHoldTimer = 0f;
@@ -173,7 +172,7 @@ public class PlayerMovement : MonoBehaviour
     private void ApplyGravity()
     {
         float scale;
-        if (isJumping && (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) && jumpHoldTimer > 0f)
+        if (isJumping && (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.Space)) && jumpHoldTimer > 0f)
             scale = stat.gravityScale * stat.jumpHoldGravityScale;
         else if (rb.velocity.y < 0f)
             scale = stat.fallGravityScale;
@@ -214,7 +213,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandlePickupInput()
     {
-        bool pressed = Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.DownArrow);
+        bool pressed = Input.GetKeyDown(KeyCode.F);
         if (!pressed) return;
         if (nearbyPickupable == null) return;
 
@@ -244,8 +243,6 @@ public class PlayerMovement : MonoBehaviour
         ps.isStartcut = true;
 
         aniRun.SetBool("isDead", true);
-        Debug.Log("[PlayerMovement] 플레이어가 배터리 방전으로 사망했습니다.");
-
         StartCoroutine(DelayedDead());
     }
     
@@ -269,6 +266,8 @@ public class PlayerMovement : MonoBehaviour
 
         if (other.TryGetComponent(out Portal portal))   // ← 포탈 감지
             nearbyPortal = portal;
+
+
     }
     
     private void OnTriggerStay2D(Collider2D other)

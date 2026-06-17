@@ -36,8 +36,17 @@ public class EndPotalTrigger : MonoBehaviour
 
     public void OpenEndPotal()
     {
-        EndScene();
+        //Debug.Log("열림");
+        if(isKey)
+        {
+            if (SceneTransition.Instance != null)
+                SceneTransition.Instance.LoadScene(nextSceneName);
+            else
+                UnityEngine.SceneManagement.SceneManager.LoadScene(nextSceneName);
+        }
+        //EndScene();
     }
+    /*
     public void EndScene()
     {
         pm.stopControll = true;
@@ -48,7 +57,7 @@ public class EndPotalTrigger : MonoBehaviour
     {
         if(isKey)
         {
-           yield return new WaitForSeconds(1f);
+           yield return new WaitForSeconds(0.1f);
             
             pm.stopControll = false;
 
@@ -59,6 +68,6 @@ public class EndPotalTrigger : MonoBehaviour
         }
         else
             pm.stopControll = false;
-    }
+    }*/
 
 }

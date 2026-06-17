@@ -270,14 +270,19 @@ public class PlayerMovement : MonoBehaviour
         if (other.TryGetComponent(out Portal portal))   // ← 포탈 감지
             nearbyPortal = portal;
     }
-
+    
     private void OnTriggerStay2D(Collider2D other)
     {
         //탈출포탈과 상호작용
-        if(other.CompareTag("EndPotal")&&Input.GetKeyDown(KeyCode.UpArrow))
+        
+        if (other.CompareTag("EndPotal") && Input.GetKey(KeyCode.UpArrow))
+        {
             ept.OpenEndPotal();
-    }
+        }
+            
 
+    }
+    
     private void OnTriggerExit2D(Collider2D other)
     {
         if (other.TryGetComponent(out IPickupable pickupable) &&

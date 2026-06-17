@@ -40,10 +40,17 @@ public class WallSwitch : MonoBehaviour
         }
 
         UpdateVisual();
+
+        Debug.Log($"[WallSwitch] 시작 / sceneKey={sceneKey}, isActivated={isActivated}");
     }
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            Debug.Log($"[WallSwitch] F 입력 / playerInRange={playerInRange}, isActivated={isActivated}");
+        }
+
         if (playerInRange && !isActivated && Input.GetKeyDown(KeyCode.F))
         {
             Activate();
@@ -58,10 +65,16 @@ public class WallSwitch : MonoBehaviour
         if (hiddenPlatformTilemap != null)
             hiddenPlatformTilemap.gameObject.SetActive(true);
 
-        if (CameraCutsceneController.Instance != null &&
-            cameraFocusPoint != null)
+        Debug.Log($"[WallSwitch] CameraCutsceneController.Instance = {CameraCutsceneController.Instance}");
+        Debug.Log($"[WallSwitch] cameraFocusPoint = {cameraFocusPoint}");
+
+        if (CameraCutsceneController.Instance != null && cameraFocusPoint != null)
         {
             CameraCutsceneController.Instance.PlayCutscene(cameraFocusPoint);
+        }
+        else
+        {
+            Debug.LogWarning("[WallSwitch] 카메라 컷신 실행 실패");
         }
 
         UpdateVisual();
@@ -79,6 +92,8 @@ public class WallSwitch : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        Debug.Log($"[WallSwitch] Trigger Enter: {other.name}");
+
         if (other.CompareTag("Player"))
             playerInRange = true;
     }

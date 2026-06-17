@@ -27,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
     private IInteractable nearbyInteractable;
 
     private Portal nearbyPortal;
-    private DeadUI deadUI;
+
     public Animator AniRun => aniRun;
 
     public PlayerSpawner ps;
@@ -40,7 +40,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         inventory = GetComponent<PlayerInventory>();
-        deadUI = FindObjectOfType<DeadUI>();
+    
     }
 
     private void OnEnable()
@@ -224,7 +224,6 @@ public class PlayerMovement : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         rb = GetComponent<Rigidbody2D>();
-        deadUI = FindObjectOfType<DeadUI>();
 
         isDead = false;
 
@@ -246,18 +245,18 @@ public class PlayerMovement : MonoBehaviour
         aniRun.SetBool("isDead", true);
         StartCoroutine(DelayedDead());
     }
-    
+
 
     private IEnumerator DelayedDead()
     {
-        yield return new WaitForSeconds(3f); // 2초 대기
+        yield return new WaitForSeconds(3f);
         rb.velocity = Vector2.zero;
         rb.bodyType = RigidbodyType2D.Kinematic;
-        deadUI.ShowDeadPanel();
-        Time.timeScale = 0f;
+
+
     }
 
-        private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.TryGetComponent(out IPickupable pickupable))
             nearbyPickupable = pickupable;
